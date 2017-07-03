@@ -1,25 +1,72 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {
+    Container,
+    Row,
+    Col,
+    Collapse,
+    Navbar,
+    NavbarToggler,
+    Nav,
+    NavItem,
+    NavLink,
+} from 'reactstrap';
+
 import withRouter from '../hoc/withRouter';
 
 class App extends Component {
+    state = {
+        isOpen: false,
+    };
+    toggle = () => {
+        this.setState({
+            isOpen: !this.state.isOpen,
+        });
+    };
     render() {
         return (
             <div className="app-container">
-                <div>
-                    <div onTouchTap={this.props.goHome}>
-                        Home
-                    </div>
-                    <div onTouchTap={this.props.goHeroes}>
-                        heroes
-                    </div>
-                    <div onTouchTap={this.props.goSorting}>
-                        sorting
-                    </div>
-                </div>
-                <div className="pages-container">
-                    {this.props.children}
-                </div>
+                <Container>
+                    <Row>
+                        <Col className="clearfix" lg="12">
+                            <Navbar color="faded" light toggleable>
+                                <NavbarToggler onClick={this.toggle} />
+                                <Collapse isOpen={this.state.isOpen} navbar>
+                                    <Nav navbar>
+                                        <NavItem>
+                                            <NavLink
+                                                onTouchTap={this.props.goHome}
+                                            >
+                                                goHome
+                                            </NavLink>
+                                        </NavItem>
+                                        <NavItem>
+                                            <NavLink
+                                                onTouchTap={this.props.goHeroes}
+                                            >
+                                                heroes
+                                            </NavLink>
+                                        </NavItem>
+                                        <NavItem>
+                                            <NavLink
+                                                onTouchTap={
+                                                    this.props.goSorting
+                                                }
+                                            >
+                                                sorting
+                                            </NavLink>
+                                        </NavItem>
+                                    </Nav>
+                                </Collapse>
+                            </Navbar>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg="12">
+                            {this.props.children}
+                        </Col>
+                    </Row>
+                </Container>
             </div>
         );
     }

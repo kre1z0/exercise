@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import groupBy from 'lodash/groupBy';
 import journals from '../../assets/data/journal.json';
 import { natSort } from '../../helpers/sort';
+import { Button } from 'reactstrap';
 
 const YearBlock = ({ year, children }) =>
     <div>
@@ -30,13 +31,13 @@ class Sorting extends Component {
         const keysTasks = tasks && Object.keys(tasks).sort((a, b) => b - a);
         return (
             <div>
-                {keysTasks.map(date => {
+                <Button color="success">success</Button>{' '}
+                {keysTasks.map(year => {
                     const tasksInDate = tasks[
-                        date
+                        year
                     ].sort(({ name: a }, { name: b }) => natSort(a, b));
                     return (
-                        <YearBlock year={date} key={date + '-key'}>
-                            {' '}
+                        <YearBlock year={year} key={year + '-key'}>
                             {tasksInDate &&
                                 tasksInDate.map((task, i) =>
                                     <IssueItem
