@@ -1,29 +1,9 @@
 @import "../../assets/base/colors";
 
-$blockMargin: 5px;
+.wrapper {
 
-:global {
-  .home-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    .left-side {
-      width: calc(17% - #{$blockMargin});
-      border-radius: 3px;
-      border: 1px solid $tundora;
-      border-bottom: none;
-      background-color: $mineShaft;
-    }
-    .center-side {
-      width: calc(60% - #{$blockMargin});
-    }
-    .right-side {
-      width: calc(23% - #{$blockMargin});
-      .youtube-list {
-        display: flex;
-        flex-wrap: wrap;
-      }
-    }
-  }
 }
 
+.block {
+
+}

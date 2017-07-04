@@ -8,10 +8,10 @@ export default function(EnhancedComponent) {
         isHome = () => this.props.location.pathname === '/';
         goHome = () => this.props.history.push('/');
 
-        isHeroes = () => this.props.location.includes('/heroes');
+        isHeroes = () => this.props.location.pathname.includes('/heroes');
         goHeroes = () => this.props.history.push('/heroes');
 
-        isSorting = () => this.props.location.includes('/sorting');
+        isSorting = () => this.props.location.pathname.includes('/sorting');
         goSorting = () => this.props.history.push('/sorting');
 
         render() {

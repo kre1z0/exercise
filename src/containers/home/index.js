@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 class Home extends Component {
-    componentDidMount() {
-        console.log('!!!!!');
-    }
-
     render() {
         return (
             <div>
@@ -15,7 +11,7 @@ class Home extends Component {
     }
 }
 
-const mapProps = ({ twitch }) => ({});
+const mapProps = () => ({});
 
 const mapActions = {};
 

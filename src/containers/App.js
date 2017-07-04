@@ -24,6 +24,14 @@ class App extends Component {
         });
     };
     render() {
+        const {
+            isHome,
+            goHome,
+            isHeroes,
+            goHeroes,
+            isSorting,
+            goSorting,
+        } = this.props;
         return (
             <div className="app-container">
                 <Container>
@@ -35,23 +43,24 @@ class App extends Component {
                                     <Nav navbar>
                                         <NavItem>
                                             <NavLink
-                                                onTouchTap={this.props.goHome}
+                                                active={isHome()}
+                                                onTouchTap={goHome}
                                             >
                                                 goHome
                                             </NavLink>
                                         </NavItem>
                                         <NavItem>
                                             <NavLink
-                                                onTouchTap={this.props.goHeroes}
+                                                active={isHeroes()}
+                                                onTouchTap={goHeroes}
                                             >
                                                 heroes
                                             </NavLink>
                                         </NavItem>
                                         <NavItem>
                                             <NavLink
-                                                onTouchTap={
-                                                    this.props.goSorting
-                                                }
+                                                active={isSorting()}
+                                                onTouchTap={goSorting}
                                             >
                                                 sorting
                                             </NavLink>

@@ -1,0 +1,11 @@
+.sorting {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  :global {
+    .btn-group {
+      width: calc(100% / 15);
+      margin-bottom: 0.5rem;
+    }
+  }
+}
