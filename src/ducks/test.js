@@ -2,7 +2,7 @@ import { createAction, createReducer } from 'redux-act';
 import { Record } from 'immutable';
 
 const TwitchState = Record({
-    streamers: [],
+    name: 'weber',
     loading: false,
     error: false,
 });
