@@ -17,11 +17,29 @@ class ImagesCarousel extends Component {
     };
 
     componentDidMount() {
-        const offsetWidth = this.carousel.offsetWidth;
+        this.handleDocumentResize();
+        window.addEventListener('resize', this.handleDocumentResize);
+        document.addEventListener('keydown', this.onKeyPress);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleDocumentResize);
+        document.removeEventListener('keydown', this.onKeyPress);
+    }
+
+    onKeyPress = e => {
+        const left = e.keyCode === 37;
+        const right = e.keyCode === 39;
+        if (left) this.onPrev();
+        if (right) this.onNext();
+    };
+
+    handleDocumentResize = () => {
+        const offsetWidth = this.carousel.clientWidth;
         this.setState({
             width: offsetWidth,
         });
-    }
+    };
 
     onPrev = () => {
         const size = this.props.items.length;

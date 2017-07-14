@@ -1,11 +1,11 @@
 .imagesCarousel {
-  border: 1px solid #000;
-  overflow: hidden;
+  border: 10px solid #000;
 }
 
 .imagesBlock {
   display: flex;
   position: relative;
+  overflow: hidden;
 }
 
 .imageWrapper {
