@@ -1,0 +1,15 @@
+CACHE MANIFEST
+#ver:2017-7-14 11:20:08
+#plugin:4.8.1
+
+CACHE:
+/exercise/static/js/main.a286b119.js
+/exercise/static/css/main.19dc529f.css
+/exercise/
+/exercise/asset-manifest.json
+
+NETWORK:
+*
+
+FALLBACK:
+/ /index.html
