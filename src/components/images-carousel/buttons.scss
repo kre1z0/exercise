@@ -1,0 +1,34 @@
+.leftNav, .rightNav {
+  outline: none;
+  border: none;
+  font-size: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+  z-index: 3;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  svg {
+    width: 60px;
+    height: 60px;
+    fill: rgba(255, 0, 0, 1);
+  }
+  &:hover {
+    svg {
+      fill: rgba(255, 0, 0, .7);
+    }
+  }
+  &:focus {
+    outline: none;
+  }
+}
+
+.leftNav {
+  left: 1rem;
+}
+
+.rightNav {
+  right: 1rem;
+}

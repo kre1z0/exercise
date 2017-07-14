@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Images from './images';
+import { LeftNav, RightNav } from './buttons';
 
 import styles from './images-carousel.scss';
 
@@ -12,7 +13,15 @@ class ImagesCarousel extends Component {
 
     state = {
         currentIndex: 0,
+        width: 0,
     };
+
+    componentDidMount() {
+        const offsetWidth = this.carousel.offsetWidth;
+        this.setState({
+            width: offsetWidth,
+        });
+    }
 
     onPrev = () => {
         const size = this.props.items.length;
@@ -48,16 +57,21 @@ class ImagesCarousel extends Component {
 
     render() {
         const { items } = this.props;
-        const { currentIndex } = this.state;
+        const { currentIndex, width } = this.state;
         return (
-            <div className={styles.imagesCarousel}>
-                <Images currentIndex={currentIndex} images={items} />
-                <button onTouchTap={this.onPrev} className={styles.leftNav}>
-                    {'<'}
-                </button>
-                <button onTouchTap={this.onNext} className={styles.rightNav}>
-                    {'>'}
-                </button>
+            <div
+                ref={c => {
+                    this.carousel = c;
+                }}
+                className={styles.imagesCarousel}
+            >
+                <Images
+                    width={width}
+                    currentIndex={currentIndex}
+                    images={items}
+                />
+                <LeftNav onTouchTap={this.onPrev} />
+                <RightNav onTouchTap={this.onNext} />
             </div>
         );
     }

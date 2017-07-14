@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Col } from 'reactstrap';
 
 import ImagesCarousel from '../../components/images-carousel';
 
@@ -15,14 +16,14 @@ const imagesArray = [
 class Home extends Component {
     render() {
         return (
-            <div>
+            <Col md="6">
                 <ImagesCarousel
                     items={imagesArray.map(image => ({
                         original: image,
                         thumbnail: image,
                     }))}
                 />
-            </div>
+            </Col>
         );
     }
 }
