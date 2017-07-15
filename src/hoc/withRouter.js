@@ -14,6 +14,9 @@ export default function(EnhancedComponent) {
         isSorting = () => this.props.location.pathname.includes('/sorting');
         goSorting = () => this.props.history.push('/sorting');
 
+        isGallery = () => this.props.location.pathname.includes('/gallery');
+        goGallery = () => this.props.history.push('/gallery');
+
         render() {
             return (
                 <EnhancedComponent
@@ -23,6 +26,8 @@ export default function(EnhancedComponent) {
                     goHeroes={this.goHeroes}
                     isSorting={this.isSorting}
                     goSorting={this.goSorting}
+                    isGallery={this.isGallery}
+                    goGallery={this.goGallery}
                     {...this.state}
                     {...this.props}
                 />

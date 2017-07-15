@@ -34,7 +34,8 @@ class ImagesCarousel extends Component {
     }
 
     _handleSwiping(index, _, delta) {
-        const { width } = this.state;
+        const { width, currentIndex } = this.state;
+        const size = this.props.items.length;
         let offsetPercentage = index * (delta / width * 100);
         if (Math.abs(offsetPercentage) >= 100) {
             offsetPercentage = index * 100;

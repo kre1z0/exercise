@@ -5591,6 +5591,15 @@ react-icons@^2.2.5:
   dependencies:
     react-icon-base "2.0.7"
 
+react-image-gallery@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/react-image-gallery/-/react-image-gallery-0.8.3.tgz#508577a261e643487b344f05e9ec1a24b2f10573"
+  dependencies:
+    lodash.debounce "^4.0.8"
+    lodash.throttle "^4.1.1"
+    prop-types "^15.5.8"
+    react-swipeable "^4.0.0"
+
 react-loader@^2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/react-loader/-/react-loader-2.4.2.tgz#14e2b9139fc5693da5cdbdc928032d5b1aeb94c2"
@@ -5691,7 +5700,7 @@ react-styleguidist@^5.2.1:
     webpack-dev-server "^1.16.3"
     webpack-merge "^4.1.0"
 
-react-swipeable@^4.0.1:
+react-swipeable@^4.0.0, react-swipeable@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/react-swipeable/-/react-swipeable-4.0.1.tgz#2cb3a04a52ccebf5361881b30e233dc13ee4b115"
   dependencies:

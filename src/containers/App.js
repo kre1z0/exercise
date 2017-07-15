@@ -31,6 +31,8 @@ class App extends Component {
             goHeroes,
             isSorting,
             goSorting,
+            isGallery,
+            goGallery,
         } = this.props;
         return (
             <div className="app-container">
@@ -63,6 +65,14 @@ class App extends Component {
                                                 onTouchTap={goSorting}
                                             >
                                                 sorting
+                                            </NavLink>
+                                        </NavItem>
+                                        <NavItem>
+                                            <NavLink
+                                                active={isGallery()}
+                                                onTouchTap={goGallery}
+                                            >
+                                                gallery
                                             </NavLink>
                                         </NavItem>
                                     </Nav>

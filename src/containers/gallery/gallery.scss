@@ -1,0 +1,60 @@
+$thumbnailsBorderWidth: 4px;
+
+.imagesCarousel {
+  border: 10px solid red;
+  :global {
+    .image-gallery-slide {
+      will-change: transform;
+      position: absolute ;
+      left: auto ;
+      top: auto;
+      background: none;
+      .image-gallery-image {
+        text-align: center;
+        img {
+          width: auto;
+        }
+      }
+    }
+    .image-gallery-slides {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-gallery-swipe {
+      height: 100%;
+    }
+
+    .image-gallery-thumbnails-container {
+
+    }
+
+    .image-gallery-thumbnail {
+      border: #{$thumbnailsBorderWidth} solid transparent;
+      width: 100px;
+      height: 100px;
+      vertical-align: middle;
+      background-color: #c4c4c4;
+      &.active {
+        overflow: hidden;
+        border: #{$thumbnailsBorderWidth} solid red;
+      }
+      & + .image-gallery-thumbnail {
+        margin-left: 10px;
+      }
+      & > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+      img {
+        width: auto;
+        max-width: 100px;
+        max-height: 100px;
+      }
+    }
+  }
+}
