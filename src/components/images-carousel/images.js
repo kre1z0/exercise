@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './images-carousel.scss';
 
-const Images = ({ images, currentIndex, width }) => {
+const Images = ({ images, currentIndex, width, percent }) => {
     return (
         <div
             style={{ width: width, height: width }}
@@ -16,10 +16,15 @@ const Images = ({ images, currentIndex, width }) => {
                         style={{
                             width: width,
                             height: width,
-                            transform: `translateX(${(index - currentIndex) *
+                            transform: `translateX(${(index -
+                                currentIndex +
+                                percent / 100) *
                                 100}%)`,
                         }}
                     >
+                        <span className={styles.index}>
+                            {index}
+                        </span>
                         <img
                             style={{
                                 maxWidth: width,

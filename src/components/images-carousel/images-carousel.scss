@@ -2,6 +2,10 @@
   border: 10px solid #000;
 }
 
+.imagesCarouselSwipe {
+
+}
+
 .imagesBlock {
   display: flex;
   position: relative;
@@ -9,10 +13,17 @@
 }
 
 .imageWrapper {
+  will-change: transform;
   position: absolute;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform .4s ease-out ;
+  transition: transform 450ms ease-out ;
+}
+
+.index {
+  position: absolute;
+  color: red;
+  font-size: 2rem;
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Swipeable from 'react-swipeable';
 
 import Images from './images';
 import { LeftNav, RightNav } from './buttons';
@@ -11,9 +12,14 @@ class ImagesCarousel extends Component {
         items: PropTypes.array.isRequired,
     };
 
+    static defaultProps = {
+        items: [],
+    };
+
     state = {
         currentIndex: 0,
         width: 0,
+        percent: 0,
     };
 
     componentDidMount() {
@@ -27,17 +33,44 @@ class ImagesCarousel extends Component {
         document.removeEventListener('keydown', this.onKeyPress);
     }
 
-    onKeyPress = e => {
-        const left = e.keyCode === 37;
-        const right = e.keyCode === 39;
+    _handleSwiping(index, _, delta) {
+        const { width } = this.state;
+        let offsetPercentage = index * (delta / width * 100);
+        if (Math.abs(offsetPercentage) >= 100) {
+            offsetPercentage = index * 100;
+        }
+        this.setState({
+            percent: offsetPercentage,
+        });
+    }
+
+    _handleOnSwipedTo = index => {
+        const { percent } = this.state;
+        if (index < 0 && percent > 50) {
+            this.setState(state => ({
+                currentIndex: state.currentIndex - 1,
+            }));
+        } else if (index > 0 && percent < -50) {
+            this.setState(state => ({
+                currentIndex: state.currentIndex + 1,
+            }));
+        }
+        this.setState({
+            percent: 0,
+        });
+    };
+
+    onKeyPress = ({ keyCode }) => {
+        const left = keyCode === 37;
+        const right = keyCode === 39;
         if (left) this.onPrev();
         if (right) this.onNext();
     };
 
     handleDocumentResize = () => {
-        const offsetWidth = this.carousel.clientWidth;
+        const width = this.carousel.clientWidth;
         this.setState({
-            width: offsetWidth,
+            width,
         });
     };
 
@@ -69,13 +102,10 @@ class ImagesCarousel extends Component {
         }
     };
 
-    static defaultProps = {
-        items: [],
-    };
-
     render() {
         const { items } = this.props;
-        const { currentIndex, width } = this.state;
+        const { currentIndex, width, percent } = this.state;
+        console.log('--> state', this.state.percent);
         return (
             <div
                 ref={c => {
@@ -83,13 +113,26 @@ class ImagesCarousel extends Component {
                 }}
                 className={styles.imagesCarousel}
             >
-                <Images
-                    width={width}
-                    currentIndex={currentIndex}
-                    images={items}
-                />
-                <LeftNav onTouchTap={this.onPrev} />
-                <RightNav onTouchTap={this.onNext} />
+                <Swipeable
+                    className={styles.imagesCarouselSwipe}
+                    key="swipeable"
+                    delta={1}
+                    onSwipingLeft={(_, delta) =>
+                        this._handleSwiping(-1, _, delta)}
+                    onSwipingRight={(_, delta) =>
+                        this._handleSwiping(1, _, delta)}
+                    onSwipedLeft={() => this._handleOnSwipedTo(1)}
+                    onSwipedRight={() => this._handleOnSwipedTo(-1)}
+                >
+                    <Images
+                        percent={percent}
+                        width={width}
+                        currentIndex={currentIndex}
+                        images={items}
+                    />
+                    <LeftNav onTouchTap={this.onPrev} />
+                    <RightNav onTouchTap={this.onNext} />
+                </Swipeable>
             </div>
         );
     }
