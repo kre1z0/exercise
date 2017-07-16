@@ -3,3 +3,4 @@ node_modules
 public
 scripts
 src/containers/gallery/ImageGallery.js
+src/components/icons/

@@ -8,6 +8,7 @@ import Routes from './routes';
 import App from './containers/App';
 import 'bootstrap/dist/css/bootstrap.css';
 import './assets/base/main.scss';
+import { theme } from './assets/theme';
 
 class Root extends Component {
     static propTypes = {
@@ -18,7 +19,7 @@ class Root extends Component {
         const { store } = this.props;
         return (
             <Provider store={store}>
-                <MuiThemeProvider>
+                <MuiThemeProvider muiTheme={theme}>
                     <Router>
                         <Switch>
                             <App>

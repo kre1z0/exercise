@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Col } from 'reactstrap';
+import ImageLoader from '../../components/img-loader/img-loader';
 
 class Home extends Component {
     render() {
         return (
             <Col md="6">
-                home
+                <ImageLoader />
             </Col>
         );
     }
