@@ -1,5 +1,3 @@
-/* eslint-disable prettier */
-
 import React from 'react';
 import Swipeable from 'react-swipeable';
 import throttle from 'lodash.throttle';
