@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-
 import './TextInput.scss';
+
+function isEmpty(value) {
+    return !value || value.trim() === '';
+}
 
 class TextInput extends Component {
     static propTypes = {
@@ -18,9 +21,21 @@ class TextInput extends Component {
         focus: PropTypes.bool,
     };
 
+    state = {
+        isEmpty: false,
+    };
+
     onChange = ({ target }) => {
         const { onChange } = this.props;
         onChange && onChange(target.value);
+    };
+
+    onBlur = ({ target: { value } }) => {
+        if (isEmpty(value)) {
+            this.setState({
+                isEmpty: true,
+            });
+        }
     };
 
     render() {
@@ -35,6 +50,8 @@ class TextInput extends Component {
             wrapperProps,
         } = this.props;
 
+        const { isEmpty } = this.state;
+
         const mergedClassName = cn('sberTextInput', className);
         const mergedWrapperClassName = cn(
             'sberTextInputWrapper',
@@ -48,6 +65,7 @@ class TextInput extends Component {
                 style={wrapperStyle}
             >
                 <input
+                    onBlur={this.onBlur}
                     {...inputProps}
                     ref={input => input && focus && input.focus()}
                     className={mergedClassName}

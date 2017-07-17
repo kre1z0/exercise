@@ -26,12 +26,23 @@ class Home extends Component {
         this.handleDocumentResize();
         window.addEventListener('resize', this.handleDocumentResize);
         document.addEventListener('keydown', this.onKeyPress);
+        document.addEventListener('click', this.handleDocumentClick);
+        document.addEventListener('touchend', this.handleDocumentClick);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleDocumentResize);
         document.removeEventListener('keydown', this.onKeyPress);
+        document.removeEventListener('click', this.handleDocumentClick);
+        document.removeEventListener('touchend', this.handleDocumentClick);
     }
+
+    handleDocumentClick = e => {
+        const inside = this.carousel.contains(e.target);
+        if (!inside) {
+            console.log('--> out');
+        }
+    };
 
     handleDocumentResize = () => {
         const width = this.carousel.clientWidth;

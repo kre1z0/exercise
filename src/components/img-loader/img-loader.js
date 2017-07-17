@@ -37,7 +37,6 @@ export const AddImgButton = props =>
     </ImageFieldButton>;
 
 export const LoadedImgButton = ({ src, ...props }) => {
-    console.log('--> LoadedImgButton');
     return (
         <ImageFieldButton {...props}>
             <Avatar src={src} />
@@ -121,7 +120,6 @@ class ImageLoader extends Component {
 
     render() {
         const { images, removeWindowOpen } = this.state;
-        console.log('--> images', images);
         return (
             <div>
                 {images.map(({ name, dataURL }) =>
