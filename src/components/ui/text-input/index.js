@@ -50,8 +50,6 @@ class TextInput extends Component {
             wrapperProps,
         } = this.props;
 
-        const { isEmpty } = this.state;
-
         const mergedClassName = cn('sberTextInput', className);
         const mergedWrapperClassName = cn(
             'sberTextInputWrapper',
