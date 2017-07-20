@@ -11,8 +11,8 @@ class Home extends Component {
     state = {
         activePanelId: null,
         data: [65, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350],
-        redLine: 100,
-        greenLine: 20,
+        redLine: 20,
+        greenLine: 100,
     };
     onPanelClick = id => {
         this.setState({
@@ -58,9 +58,9 @@ class Home extends Component {
                     ]}
                 />
                 <LineChart
+                    redLineValue={this.state.redLine}
+                    greenLineValue={this.state.greenLine}
                     data={this.state.data}
-                    redLine={this.state.redLine}
-                    greenLine={this.state.greenLine}
                     labels={[
                         'Янв',
                         'Фев',

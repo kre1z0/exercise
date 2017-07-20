@@ -5,60 +5,90 @@ class LineChart extends Component {
     componentWillMount() {
         Chart.pluginService.register({
             beforeDatasetsDraw: chart => {
-                console.log('--> &&&&&&& <--', chart);
-                const { greenLine, redLine } = this.props;
-                const ctx = chart.chart.ctx;
-                // ↓ When using a dashed line, make sure to save and restore the canvas
-                // ↓ save
-                ctx.save();
+                //console.log('--> beforeDatasetsDraw <--', chart);
+                const { greenLineValue, redLineValue } = this.props;
 
-                const chartAreaLeft = chart.chartArea.left;
-                const chartAreaRight = chart.chartArea.right;
-                const chartAreaBottom = chart.chartArea.bottom;
+                if (greenLineValue && redLineValue) {
+                    const ctx = chart.chart.ctx;
 
-                // addEvent:function (node, eventType, method)
-                //console.log('--> chart helper', chart.helpers);
+                    const chartAreaLeft = chart.chartArea.left;
+                    const chartAreaRight = chart.chartArea.right;
+                    const chartAreaBottom = chart.chartArea.bottom;
 
-                // ↓ line
-                ctx.setLineDash([10, 2]);
-                ctx.lineWidth = 3;
-                // ↓ green line
-                ctx.beginPath();
-                ctx.strokeStyle = 'green';
-                ctx.moveTo(chartAreaLeft, chartAreaBottom - greenLine);
-                ctx.lineTo(chartAreaRight, chartAreaBottom - greenLine);
-                ctx.stroke();
-                // ↓ red line
-                ctx.beginPath();
-                ctx.strokeStyle = 'red';
-                ctx.moveTo(chartAreaLeft, chartAreaBottom - redLine);
-                ctx.lineTo(chartAreaRight, chartAreaBottom - redLine);
-                ctx.stroke();
+                    // ↓ When using a dashed line, make sure to save and restore the canvas
+                    ctx.save();
+                    ctx.setLineDash([5, 2]);
+                    // ↓ fix canvas 1px lineWidth bug
+                    const halfPixel = 0.5;
 
-                // ↓ restore
-                ctx.restore();
+                    // ↓ green line
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'green';
+                    ctx.beginPath();
+                    ctx.moveTo(
+                        chartAreaLeft,
+                        chartAreaBottom + halfPixel - greenLineValue,
+                    );
+                    ctx.lineTo(
+                        chartAreaRight,
+                        chartAreaBottom + halfPixel - greenLineValue,
+                    );
+                    ctx.stroke();
+
+                    // ↓ red line
+                    ctx.strokeStyle = 'red';
+                    ctx.beginPath();
+                    ctx.moveTo(
+                        chartAreaLeft,
+                        chartAreaBottom + halfPixel - redLineValue,
+                    );
+                    ctx.lineTo(
+                        chartAreaRight,
+                        chartAreaBottom + halfPixel - redLineValue,
+                    );
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // ↓ vertical line after hover a point
+                    if (this._verticalLine) {
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'blue';
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            this._verticalLine.x + halfPixel,
+                            this._verticalLine.y + this._verticalLine.radius,
+                        );
+                        ctx.lineTo(
+                            this._verticalLine.x + halfPixel,
+                            chartAreaBottom,
+                        );
+                        ctx.stroke();
+                    }
+                }
             },
         });
     }
+
+    _verticalLine = null;
+
     renderVerticalLineFromPoint = ([charElement]) => {
-        console.log('--> charElement', charElement);
         if (charElement) {
-            const ctx = charElement._chart.ctx;
             const view = charElement._view;
-            const chartAreaBottom = charElement._chart.chartArea.bottom;
             const y = view.y;
             const x = view.x;
             const pointRadius = charElement._view.radius;
-            ctx.beginPath();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = 'green';
-            ctx.moveTo(x, y + pointRadius);
-            ctx.lineTo(x, chartAreaBottom);
-            ctx.stroke();
+            this._verticalLine = {
+                x: x,
+                y: y,
+                radius: pointRadius,
+            };
+        } else {
+            this._verticalLine = null;
         }
     };
+
     render() {
-        const { labels, data, greenLine, redLine } = this.props;
+        const { labels, data } = this.props;
         const maxNumberOfData = Math.max(...data);
         const stepSize = maxNumberOfData / 4;
         const max = maxNumberOfData + stepSize;
@@ -73,26 +103,24 @@ class LineChart extends Component {
                     borderColor: 'yellow',
                     // Point ↓
                     pointStyle: 'circle',
-                    pointBorderColor: 'green',
+                    pointRadius: 4,
+                    pointBorderColor: 'blue',
                     pointBackgroundColor: '#fff',
                     pointBorderWidth: 3,
                     pointHoverRadius: 4,
                     pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'green',
+                    pointHoverBorderColor: 'blue',
                     pointHoverBorderWidth: 3,
-                    pointRadius: 4,
                     // Point ↑
                 },
             ],
         };
 
         const options = {
-            onClick: (e, charElement) =>
-                this.renderVerticalLineFromPoint(charElement),
-            //hover: {
-            //    onHover: (e, charElement) =>
-            //        this.renderVerticalLineFromPoint(charElement),
-            //},
+            hover: {
+                onHover: (e, charElement) =>
+                    this.renderVerticalLineFromPoint(charElement),
+            },
             animation: false,
             responsive: false,
             layout: {
@@ -146,11 +174,6 @@ class LineChart extends Component {
                             chart.ticks.splice(0, 1);
                         },
                         ticks: {
-                            //callback: tick => {
-                            //    //console.log('--> ticks', tick);
-                            //    //if (tick === 250) return null;
-                            //    return tick;
-                            //},
                             fontSize: 12,
                             fontFamily: 'FedraSans, sans-serif',
                             fontColor: 'red',
