@@ -26,7 +26,7 @@ class Home extends Component {
         const { activePanelId } = this.state;
 
         return (
-            <Col md="6" style={{ background: '#fff' }}>
+            <Col md="6" style={{ background: '#fff', padding: 0 }}>
                 <FilterPanel
                     onTouchTap={this.onPanelClick}
                     activePanelId={activePanelId}

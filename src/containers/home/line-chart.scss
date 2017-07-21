@@ -1,0 +1,13 @@
+.lineChart {
+  position: relative;
+  :global {
+    .y-scale-canvas {
+      background-color: rebeccapurple;
+      left: 0;
+      position: absolute;
+    }
+    .line-chart-wrapper {
+      overflow-x: auto;
+    }
+  }
+}

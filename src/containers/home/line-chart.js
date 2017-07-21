@@ -1,29 +1,60 @@
 import React, { Component } from 'react';
 import { Line, Chart } from 'react-chartjs-2';
 
+import styles from './line-chart.scss';
+
 class LineChart extends Component {
     componentWillMount() {
         Chart.pluginService.register({
             beforeDatasetsDraw: chart => {
                 console.log('--> <--', chart);
-                const { greenLineValue, redLineValue } = this.props;
-
+                const { greenLineValue, redLineValue, labels } = this.props;
                 const ctx = chart.chart.ctx;
 
                 const chartAreaLeft = chart.chartArea.left;
                 const chartAreaRight = chart.chartArea.right;
                 const chartAreaBottom = chart.chartArea.bottom;
                 const xAxe = chart.config.options.scales.xAxes[0];
+                const yAxe = chart.config.options.scales.yAxes[0];
                 const xScale = chart.scales[xAxe.id];
+                const yScale = chart.scales[yAxe.id];
 
-                console.log('--> this', this.firstAndLastTicksLabel);
-                ctx.textBaseline = 'middle';
+                const sourceCanvas = ctx.canvas;
+                const copyWidth = yScale.width;
+                const copyHeight = yScale.height;
+                const targetCtx = this.yScale.getContext('2d');
+                targetCtx.canvas.width = copyWidth;
+                targetCtx.drawImage(
+                    sourceCanvas,
+                    0,
+                    0,
+                    copyWidth,
+                    copyHeight,
+                    0,
+                    0,
+                    copyWidth,
+                    copyHeight,
+                );
+                console.log('--> yScale', yScale);
+
+                const firstTickLabel = labels[0];
+                const lastTickLabel = labels[labels.length - 1];
+                console.log('--> xScale', xScale);
+                ctx.textBaseline = 'alphabetic';
                 ctx.fillStyle = 'red';
                 ctx.font = '12px FedraSans, sans-serif';
                 ctx.textAlign = 'start';
-                ctx.fillText('first', xScale.left, xScale.bottom - 11);
+                ctx.fillText(
+                    firstTickLabel,
+                    xScale.left,
+                    xScale.bottom - xScale.height / 4,
+                );
                 ctx.textAlign = 'end';
-                ctx.fillText('last', xScale.right, xScale.bottom - 11);
+                ctx.fillText(
+                    lastTickLabel,
+                    xScale.right,
+                    xScale.bottom - xScale.height / 4,
+                );
 
                 if (greenLineValue && redLineValue) {
                     // ↓ When using a dashed line, make sure to save and restore the canvas
@@ -165,10 +196,16 @@ class LineChart extends Component {
                             display: false,
                         },
                         afterBuildTicks: chart => {
+                            const copyTicksArray = chart.ticks.slice();
                             // ↓ hide first tick
-                            chart.ticks.splice(0, 1, '');
+                            copyTicksArray.splice(0, 1, '');
                             // ↓ hide last tick
-                            chart.ticks.splice(chart.ticks.length - 1, 1, '');
+                            copyTicksArray.splice(
+                                chart.ticks.length - 1,
+                                1,
+                                '',
+                            );
+                            chart.ticks = copyTicksArray;
                         },
                         ticks: {
                             fontFamily: 'FedraSans, sans-serif',
@@ -187,14 +224,16 @@ class LineChart extends Component {
                             zeroLineBorderDash: [30],
                         },
                         afterBuildTicks: chart => {
+                            const copyTicksArray = chart.ticks.slice();
                             // ↓ hide last tick
-                            chart.ticks.splice(0, 1);
+                            copyTicksArray.splice(0, 1);
+                            chart.ticks = copyTicksArray;
                         },
                         ticks: {
                             fontSize: 12,
                             fontFamily: 'FedraSans, sans-serif',
                             fontColor: 'red',
-                            padding: 50,
+                            padding: 10,
                             max: max,
                             min: 0,
                             stepSize: stepSize,
@@ -204,13 +243,25 @@ class LineChart extends Component {
             },
         };
         return (
-            <Line
-                width={1000}
-                height={260}
-                legend={{ display: false }}
-                options={options}
-                data={dataSet}
-            />
+            <div className={styles.lineChart}>
+                <canvas
+                    className="y-scale-canvas"
+                    ref={c => {
+                        this.yScale = c;
+                    }}
+                    height={260}
+                    width={0}
+                />
+                <div className="line-chart-wrapper">
+                    <Line
+                        width={1000}
+                        height={260}
+                        legend={{ display: false }}
+                        options={options}
+                        data={dataSet}
+                    />
+                </div>
+            </div>
         );
     }
 }
