@@ -2,7 +2,8 @@
   position: relative;
   :global {
     .y-scale-canvas {
-      background-color: rebeccapurple;
+      //display: none;
+      background-color: #fff;
       left: 0;
       position: absolute;
     }

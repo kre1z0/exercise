@@ -20,10 +20,15 @@ class LineChart extends Component {
                 const yScale = chart.scales[yAxe.id];
 
                 const sourceCanvas = ctx.canvas;
-                const copyWidth = yScale.width;
-                const copyHeight = yScale.height;
+
+                const leftPaddingLayout =
+                    chart.config.options.layout.padding.left;
+                // ↓ +1px border and 35 padding layout
+                const copyWidth = yScale.width + 1 + leftPaddingLayout;
+                const copyHeight = chart.height;
                 const targetCtx = this.yScale.getContext('2d');
                 targetCtx.canvas.width = copyWidth;
+                targetCtx.canvas.height = copyHeight;
                 targetCtx.drawImage(
                     sourceCanvas,
                     0,
@@ -167,8 +172,8 @@ class LineChart extends Component {
             responsive: false,
             layout: {
                 padding: {
-                    left: 0,
-                    right: 25,
+                    left: 30,
+                    right: 30,
                     top: 0,
                     bottom: 0,
                 },
@@ -219,9 +224,8 @@ class LineChart extends Component {
                         gridLines: {
                             drawTicks: false,
                             lineWidth: 1,
-                            color: 'blue',
-                            zeroLineColor: 'green',
-                            zeroLineBorderDash: [30],
+                            color: 'red',
+                            zeroLineColor: 'red',
                         },
                         afterBuildTicks: chart => {
                             const copyTicksArray = chart.ticks.slice();
@@ -249,8 +253,6 @@ class LineChart extends Component {
                     ref={c => {
                         this.yScale = c;
                     }}
-                    height={260}
-                    width={0}
                 />
                 <div className="line-chart-wrapper">
                     <Line
