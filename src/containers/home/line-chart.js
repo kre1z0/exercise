@@ -5,16 +5,27 @@ class LineChart extends Component {
     componentWillMount() {
         Chart.pluginService.register({
             beforeDatasetsDraw: chart => {
-                //console.log('--> beforeDatasetsDraw <--', chart);
+                console.log('--> <--', chart);
                 const { greenLineValue, redLineValue } = this.props;
 
+                const ctx = chart.chart.ctx;
+
+                const chartAreaLeft = chart.chartArea.left;
+                const chartAreaRight = chart.chartArea.right;
+                const chartAreaBottom = chart.chartArea.bottom;
+                const xAxe = chart.config.options.scales.xAxes[0];
+                const xScale = chart.scales[xAxe.id];
+
+                console.log('--> this', this.firstAndLastTicksLabel);
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'red';
+                ctx.font = '12px FedraSans, sans-serif';
+                ctx.textAlign = 'start';
+                ctx.fillText('first', xScale.left, xScale.bottom - 11);
+                ctx.textAlign = 'end';
+                ctx.fillText('last', xScale.right, xScale.bottom - 11);
+
                 if (greenLineValue && redLineValue) {
-                    const ctx = chart.chart.ctx;
-
-                    const chartAreaLeft = chart.chartArea.left;
-                    const chartAreaRight = chart.chartArea.right;
-                    const chartAreaBottom = chart.chartArea.bottom;
-
                     // ↓ When using a dashed line, make sure to save and restore the canvas
                     ctx.save();
                     ctx.setLineDash([5, 2]);
@@ -100,16 +111,16 @@ class LineChart extends Component {
                     label: '',
                     lineTension: 0,
                     backgroundColor: 'rgba(100, 199, 108, 0.3)',
-                    borderColor: 'yellow',
+                    borderColor: 'rgb(100, 199, 108)',
                     // Point ↓
                     pointStyle: 'circle',
                     pointRadius: 4,
-                    pointBorderColor: 'blue',
+                    pointBorderColor: 'rgb(100, 199, 108)',
                     pointBackgroundColor: '#fff',
                     pointBorderWidth: 3,
                     pointHoverRadius: 4,
                     pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'blue',
+                    pointHoverBorderColor: 'rgb(100, 199, 108)',
                     pointHoverBorderWidth: 3,
                     // Point ↑
                 },
@@ -126,7 +137,7 @@ class LineChart extends Component {
             layout: {
                 padding: {
                     left: 0,
-                    right: 50,
+                    right: 25,
                     top: 0,
                     bottom: 0,
                 },
@@ -153,6 +164,12 @@ class LineChart extends Component {
                         gridLines: {
                             display: false,
                         },
+                        afterBuildTicks: chart => {
+                            // ↓ hide first tick
+                            chart.ticks.splice(0, 1, '');
+                            // ↓ hide last tick
+                            chart.ticks.splice(chart.ticks.length - 1, 1, '');
+                        },
                         ticks: {
                             fontFamily: 'FedraSans, sans-serif',
                             fontSize: 12,
@@ -177,7 +194,7 @@ class LineChart extends Component {
                             fontSize: 12,
                             fontFamily: 'FedraSans, sans-serif',
                             fontColor: 'red',
-                            padding: 10,
+                            padding: 50,
                             max: max,
                             min: 0,
                             stepSize: stepSize,

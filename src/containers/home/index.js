@@ -10,7 +10,7 @@ import './analytic.scss';
 class Home extends Component {
     state = {
         activePanelId: null,
-        data: [65, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350],
+        data: [65, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350, 230],
         redLine: 20,
         greenLine: 100,
     };
