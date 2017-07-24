@@ -4,31 +4,70 @@ import { Line, Chart } from 'react-chartjs-2';
 import styles from './line-chart.scss';
 
 class LineChart extends Component {
+    componentDidMount() {
+        //const chart = this.lineChart.chart_instance;
+        //const ctx = chart.ctx;
+        //const yAxe = chart.config.options.scales.yAxes[0];
+        //const yScale = chart.scales[yAxe.id];
+        //const sourceCanvas = ctx.canvas;
+        //const targetCtx = this.yScaleCanvas.getContext('2d');
+        //const leftPaddingLayout = chart.config.options.layout.padding.left;
+        //// ↓ +1px border and 35 padding layout
+        //let copyWidth = yScale.width + 1 + leftPaddingLayout;
+        //let copyHeight = chart.height;
+        //// ↓ Canvas not sizing to window inner width & height
+        //if (ctx.canvas.width > chart.width) {
+        //    targetCtx.canvas.style.width = copyWidth + 'px';
+        //    targetCtx.canvas.style.height = copyHeight + 'px';
+        //    copyWidth = copyWidth * 2;
+        //    copyHeight = copyHeight * 2;
+        //}
+        //targetCtx.canvas.width = copyWidth;
+        //targetCtx.canvas.height = copyHeight;
+        //
+        //targetCtx.drawImage(
+        //    sourceCanvas,
+        //    0,
+        //    0,
+        //    copyWidth,
+        //    copyHeight,
+        //    0,
+        //    0,
+        //    copyWidth,
+        //    copyHeight,
+        //);
+        //console.log('--> line chart', targetCtx);
+        //console.log('-->', this.yScaleCanvas);
+    }
     componentWillMount() {
+        //Chart.pluginService.clear();
+        console.log('--> Chart.pluginService', Chart.pluginService);
         Chart.pluginService.register({
             beforeDatasetsDraw: chart => {
-                console.log('--> <--', chart);
-                const { greenLineValue, redLineValue, labels } = this.props;
-                const ctx = chart.chart.ctx;
-
-                const chartAreaLeft = chart.chartArea.left;
-                const chartAreaRight = chart.chartArea.right;
-                const chartAreaBottom = chart.chartArea.bottom;
-                const xAxe = chart.config.options.scales.xAxes[0];
+                console.log('--> beforeDatasetsDraw', chart);
+                const ctx = chart.ctx;
                 const yAxe = chart.config.options.scales.yAxes[0];
-                const xScale = chart.scales[xAxe.id];
                 const yScale = chart.scales[yAxe.id];
 
                 const sourceCanvas = ctx.canvas;
-
+                const targetCtx = this.yScaleCanvas.getContext('2d');
                 const leftPaddingLayout =
                     chart.config.options.layout.padding.left;
                 // ↓ +1px border and 35 padding layout
-                const copyWidth = yScale.width + 1 + leftPaddingLayout;
-                const copyHeight = chart.height;
-                const targetCtx = this.yScale.getContext('2d');
+                let copyWidth = yScale.width + 1 + leftPaddingLayout;
+                let copyHeight = chart.height;
+
+                // ↓ Canvas not sizing to window inner width & height
+                if (ctx.canvas.width > chart.width) {
+                    targetCtx.canvas.style.width = copyWidth + 'px';
+                    targetCtx.canvas.style.height = copyHeight + 'px';
+                    copyWidth = copyWidth * 2;
+                    copyHeight = copyHeight * 2;
+                }
+
                 targetCtx.canvas.width = copyWidth;
                 targetCtx.canvas.height = copyHeight;
+
                 targetCtx.drawImage(
                     sourceCanvas,
                     0,
@@ -40,13 +79,22 @@ class LineChart extends Component {
                     copyWidth,
                     copyHeight,
                 );
-                console.log('--> yScale', yScale);
+            },
+            afterDatasetsDraw: chart => {
+                console.log('--> afterDatasetsDraw', chart);
+                const { greenLineValue, redLineValue, labels } = this.props;
+                const ctx = chart.ctx;
+
+                const chartAreaLeft = chart.chartArea.left;
+                const chartAreaRight = chart.chartArea.right;
+                const chartAreaBottom = chart.chartArea.bottom;
+                const xAxe = chart.config.options.scales.xAxes[0];
+                const xScale = chart.scales[xAxe.id];
 
                 const firstTickLabel = labels[0];
                 const lastTickLabel = labels[labels.length - 1];
-                console.log('--> xScale', xScale);
                 ctx.textBaseline = 'alphabetic';
-                ctx.fillStyle = 'red';
+                ctx.fillStyle = 'green';
                 ctx.font = '12px FedraSans, sans-serif';
                 ctx.textAlign = 'start';
                 ctx.fillText(
@@ -133,7 +181,6 @@ class LineChart extends Component {
             this._verticalLine = null;
         }
     };
-
     render() {
         const { labels, data } = this.props;
         const maxNumberOfData = Math.max(...data);
@@ -170,6 +217,7 @@ class LineChart extends Component {
             },
             animation: false,
             responsive: false,
+            backgroundColor: 'red',
             layout: {
                 padding: {
                     left: 30,
@@ -249,13 +297,16 @@ class LineChart extends Component {
         return (
             <div className={styles.lineChart}>
                 <canvas
-                    className="y-scale-canvas"
                     ref={c => {
-                        this.yScale = c;
+                        this.yScaleCanvas = c;
                     }}
+                    className="y-scale-canvas"
                 />
                 <div className="line-chart-wrapper">
                     <Line
+                        ref={c => {
+                            this.lineChart = c;
+                        }}
                         width={1000}
                         height={260}
                         legend={{ display: false }}
