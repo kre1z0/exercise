@@ -11,6 +11,7 @@ class Home extends Component {
         return (
             <Col md="6" style={{ background: '#fff', padding: 0 }}>
                 <ObjectAnalyticItem />
+                <ObjectAnalyticItem />
             </Col>
         );
     }

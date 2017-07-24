@@ -56,6 +56,8 @@ class ObjectAnalyticItem extends Component {
                     ]}
                 />
                 <LineChart
+                    width={1000}
+                    height={260}
                     redLineValue={this.state.redLine}
                     greenLineValue={this.state.greenLine}
                     data={this.state.data}
