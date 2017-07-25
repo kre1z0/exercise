@@ -5,36 +5,13 @@ import styles from './line-chart.scss';
 
 class LineChart extends Component {
     _pixelRatio = window.devicePixelRatio;
+    _firstPointPaddinLeft = 10;
     componentWillMount() {
-        const firstPointPaddinLeft = 10;
         Chart.pluginService.register({
             afterUpdate: chart => {
                 const dataFirstPoint = chart.getDatasetMeta(0).data[0];
                 dataFirstPoint._model.x =
-                    chart.chartArea.left + firstPointPaddinLeft;
-                //ctx.beginPath();
-                //ctx.rect(250, 300, 150, 100);
-                //ctx.fillStyle = 'blue';
-                //ctx.fill();
-                console.log('--> chart', chart);
-                //const chartId = chart.id;
-                //let x =
-                //    chart.tooltip._data.datasets[0]._meta[chartId].data[0]
-                //        ._model.x;
-                //x = x + 10;
-                //console.log('--> chart', x);
-            },
-            beforeDatasetsDraw: chart => {
-                //const ctx = chart.ctx;
-                //ctx.beginPath();
-                //ctx.fillStyle = 'rgba(100, 199, 108, 0.3)';
-                //ctx.rect(
-                //    chart.chartArea.left + 1,
-                //    chart.chartArea.left + 1,
-                //    200,
-                //    200,
-                //);
-                //ctx.fill();
+                    chart.chartArea.left + this._firstPointPaddinLeft;
             },
             afterDatasetsDraw: chart => {
                 const datasets = chart.config.data.datasets[0];
@@ -52,7 +29,7 @@ class LineChart extends Component {
                 ctx.lineTo(
                     chart.chartArea.left +
                         2 +
-                        firstPointPaddinLeft -
+                        this._firstPointPaddinLeft -
                         pointRadius -
                         pointBorderWidth,
                     y,
@@ -143,9 +120,15 @@ class LineChart extends Component {
             xScale.right,
             xScale.bottom - xScale.height / 4,
         );
+        const firstPointY = chart.getDatasetMeta(0).data[0]._model.y;
         ctx.beginPath();
         ctx.fillStyle = datasets.backgroundColor;
-        ctx.rect(chart.chartArea.left + 1, 150, 9, 50);
+        ctx.rect(
+            chart.chartArea.left + 1,
+            firstPointY,
+            this._firstPointPaddinLeft - 1,
+            chartAreaBottom - firstPointY,
+        );
         ctx.fill();
     }
     drawYscale() {
