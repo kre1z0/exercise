@@ -3,7 +3,6 @@
   :global {
     .y-scale-canvas {
       z-index: 2;
-      //display: none;
       background-color: #fff;
       left: 0;
       position: absolute;
@@ -13,9 +12,6 @@
       top: 0;
       position: absolute;
       pointer-events:none;
-    }
-    .dashed-line-canvas {
-      z-index: 0;
     }
     .line-chart-wrapper {
       overflow-x: auto;

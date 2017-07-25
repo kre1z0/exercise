@@ -4,12 +4,24 @@ import { Line } from 'react-chartjs-2';
 import styles from './line-chart.scss';
 
 class LineChart extends Component {
+    _pixelRatio = window.devicePixelRatio;
+
     componentDidMount() {
         const style = this.lineChart.chart_instance.canvas.style;
+        this.pointLine
+            .getContext('2d')
+            .scale(this._pixelRatio, this._pixelRatio);
+        this.lineCanvas
+            .getContext('2d')
+            .scale(this._pixelRatio, this._pixelRatio);
         style.zIndex = 1;
         style.position = 'relative';
         this.drawYscale();
         this.strokeTwoDashedLine();
+        //const chart = this.lineChart.chart_instance;
+        //const id = chart.chart.id;
+        //const x = chart.tooltip._data.datasets[0]._meta[id].data[0]._model.x;
+        //chart.tooltip._data.datasets[0]._meta[id].data[0]._model.x = x + 20;
     }
     componentDidUpdate() {
         console.log('--> componentDidUpdate');
@@ -67,7 +79,7 @@ class LineChart extends Component {
         ctx.textAlign = 'start';
         ctx.fillText(
             firstTickLabel,
-            xScale.left,
+            xScale.left + 1,
             xScale.bottom - xScale.height / 4,
         );
         ctx.textAlign = 'end';
@@ -114,15 +126,16 @@ class LineChart extends Component {
     }
 
     renderVerticalLineFromPoint = ([charElement]) => {
-        console.log('--> charElement', charElement);
         const { width, height } = this.props;
+
         const ctx = this.pointLine.getContext('2d');
         const chart = this.lineChart.chart_instance;
+
         if (charElement) {
             const chartAreaBottom = chart.chartArea.bottom;
             const view = charElement._view;
-            const y = view.y;
-            const x = view.x;
+            const y = Math.floor(view.y);
+            const x = Math.floor(view.x);
             const pointRadius = charElement._view.radius;
             ctx.lineWidth = 1;
             ctx.strokeStyle = 'blue';
@@ -149,6 +162,7 @@ class LineChart extends Component {
                     lineTension: 0,
                     backgroundColor: 'rgba(100, 199, 108, 0.3)',
                     borderColor: 'rgb(100, 199, 108)',
+                    borderWidth: 3,
                     // Point ↓
                     pointStyle: 'circle',
                     pointRadius: 4,
@@ -204,9 +218,9 @@ class LineChart extends Component {
                         },
                         afterBuildTicks: chart => {
                             const copyTicksArray = chart.ticks.slice();
-                            // ↓ hide first tick
+                            // ↓ hide first tick xScale
                             copyTicksArray.splice(0, 1, '');
-                            // ↓ hide last tick
+                            // ↓ hide last tick xScale
                             copyTicksArray.splice(
                                 chart.ticks.length - 1,
                                 1,
@@ -231,7 +245,7 @@ class LineChart extends Component {
                         },
                         afterBuildTicks: chart => {
                             const copyTicksArray = chart.ticks.slice();
-                            // ↓ hide last tick
+                            // ↓ hide last tick yScale
                             copyTicksArray.splice(0, 1);
                             chart.ticks = copyTicksArray;
                         },
@@ -268,16 +282,24 @@ class LineChart extends Component {
                         data={dataSet}
                     />
                     <canvas
-                        width={width}
-                        height={height}
+                        width={width * this._pixelRatio}
+                        height={height * this._pixelRatio}
+                        style={{
+                            width: width,
+                            height: height,
+                        }}
                         ref={c => {
                             this.lineCanvas = c;
                         }}
                         className="dashed-line-canvas"
                     />
                     <canvas
-                        width={width}
-                        height={height}
+                        width={width * this._pixelRatio}
+                        height={height * this._pixelRatio}
+                        style={{
+                            width: width,
+                            height: height,
+                        }}
                         ref={c => {
                             this.pointLine = c;
                         }}

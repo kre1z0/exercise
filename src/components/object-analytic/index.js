@@ -17,7 +17,7 @@ class ObjectAnalyticItem extends Component {
             redLine: 40,
             greenLine: id * 50,
             activePanelId: id,
-            data: [444, 59, 25, 1500, 545, 45, 77, 77, 55, 55, 350],
+            data: [444, 59, 25, 500, 545, 45, 77, 77, 55, 55, 350],
         });
     };
     render() {
