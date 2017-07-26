@@ -8,7 +8,7 @@ import './object-analytic.scss';
 class ObjectAnalyticItem extends Component {
     state = {
         activePanelId: null,
-        data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350, 230],
+        data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350],
         redLine: 20,
         greenLine: 100,
     };
@@ -17,7 +17,7 @@ class ObjectAnalyticItem extends Component {
             redLine: 40,
             greenLine: id * 50,
             activePanelId: id,
-            data: [444, 59, 25, 500, 545, 45, 77, 77, 55, 55, 350],
+            data: [444, 59, 25, 500, 545, 45, 77, 77, 55, 55, 350, 250],
         });
     };
     render() {

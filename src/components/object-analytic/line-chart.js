@@ -5,36 +5,44 @@ import styles from './line-chart.scss';
 
 class LineChart extends Component {
     _pixelRatio = window.devicePixelRatio;
-    _firstPointPaddinLeft = 10;
+
     componentWillMount() {
         Chart.pluginService.register({
             afterUpdate: chart => {
-                const dataFirstPoint = chart.getDatasetMeta(0).data[0];
-                dataFirstPoint._model.x =
-                    chart.chartArea.left + this._firstPointPaddinLeft;
+                if (chart.config.options.firstPointPaddinLeft) {
+                    const paddingLeft =
+                        chart.config.options.firstPointPaddinLeft;
+                    const dataFirstPoint = chart.getDatasetMeta(0).data[0];
+                    dataFirstPoint._model.x =
+                        chart.chartArea.left + paddingLeft;
+                }
             },
             afterDatasetsDraw: chart => {
-                const datasets = chart.config.data.datasets[0];
-                const borderWidth = datasets.borderWidth;
-                const pointBorderWidth = datasets.pointBorderWidth;
-                const borderColor = datasets.borderColor;
-                const pointRadius = datasets.pointRadius;
-                const dataFirstPoint = chart.getDatasetMeta(0).data[0];
-                const y = dataFirstPoint._model.y;
-                const ctx = chart.ctx;
-                ctx.lineWidth = borderWidth;
-                ctx.strokeStyle = borderColor;
-                ctx.beginPath();
-                ctx.moveTo(chart.chartArea.left + 1, y);
-                ctx.lineTo(
-                    chart.chartArea.left +
-                        2 +
-                        this._firstPointPaddinLeft -
-                        pointRadius -
-                        pointBorderWidth,
-                    y,
-                );
-                ctx.stroke();
+                if (chart.config.options.firstPointPaddinLeft) {
+                    const paddingLeft =
+                        chart.config.options.firstPointPaddinLeft;
+                    const datasets = chart.config.data.datasets[0];
+                    const borderWidth = datasets.borderWidth;
+                    const pointBorderWidth = datasets.pointBorderWidth;
+                    const borderColor = datasets.borderColor;
+                    const pointRadius = datasets.pointRadius;
+                    const dataFirstPoint = chart.getDatasetMeta(0).data[0];
+                    const y = dataFirstPoint._model.y;
+                    const ctx = chart.ctx;
+                    ctx.lineWidth = borderWidth;
+                    ctx.strokeStyle = borderColor;
+                    ctx.beginPath();
+                    ctx.moveTo(chart.chartArea.left + 1, y);
+                    ctx.lineTo(
+                        chart.chartArea.left +
+                            2 +
+                            paddingLeft -
+                            pointRadius -
+                            pointBorderWidth,
+                        y,
+                    );
+                    ctx.stroke();
+                }
             },
         });
     }
@@ -50,10 +58,6 @@ class LineChart extends Component {
         style.position = 'relative';
         this.drawYscale();
         this.dashedLinesAndlabels();
-        //const chart = this.lineChart.chart_instance;
-        //const id = chart.chart.id;
-        //const x = chart.tooltip._data.datasets[0]._meta[id].data[0]._model.x;
-        //chart.tooltip._data.datasets[0]._meta[id].data[0]._model.x = x + 20;
     }
     componentDidUpdate() {
         this.drawYscale();
@@ -121,12 +125,13 @@ class LineChart extends Component {
             xScale.bottom - xScale.height / 4,
         );
         const firstPointY = chart.getDatasetMeta(0).data[0]._model.y;
+        const paddingLeft = chart.config.options.firstPointPaddinLeft;
         ctx.beginPath();
         ctx.fillStyle = datasets.backgroundColor;
         ctx.rect(
             chart.chartArea.left + 1,
             firstPointY,
-            this._firstPointPaddinLeft - 1,
+            paddingLeft - 1,
             chartAreaBottom - firstPointY,
         );
         ctx.fill();
@@ -142,28 +147,26 @@ class LineChart extends Component {
         targetCtx.clearRect(0, 0, width, height);
         const leftPaddingLayout = chart.config.options.layout.padding.left;
         // ↓ +1px border and 35 padding layout
-        let copyWidth = yScale.width + 1 + leftPaddingLayout;
-        let copyHeight = chart.height;
+        const copyWidth = yScale.width + 1 + leftPaddingLayout;
+        const copyHeight = chart.height;
+        const yScaleWidth = copyWidth * this._pixelRatio;
+        const yScaleHeight = copyHeight * this._pixelRatio;
         // ↓ Canvas not sizing to window inner width & height
-        if (ctx.canvas.width > chart.width) {
-            targetCtx.canvas.style.width = copyWidth + 'px';
-            targetCtx.canvas.style.height = copyHeight + 'px';
-            copyWidth = copyWidth * 2;
-            copyHeight = copyHeight * 2;
-        }
-        targetCtx.canvas.width = copyWidth;
-        targetCtx.canvas.height = copyHeight;
+        targetCtx.canvas.width = yScaleWidth;
+        targetCtx.canvas.height = yScaleHeight;
+        targetCtx.canvas.style.width = copyWidth + 'px';
+        targetCtx.canvas.style.height = copyHeight + 'px';
 
         targetCtx.drawImage(
             sourceCanvas,
             0,
             0,
-            copyWidth,
-            copyHeight,
+            yScaleWidth,
+            yScaleHeight,
             0,
             0,
-            copyWidth,
-            copyHeight,
+            yScaleWidth,
+            yScaleHeight,
         );
     }
 
@@ -187,7 +190,7 @@ class LineChart extends Component {
             const x = Math.floor(view.x);
             const pointRadius = charElement._view.radius;
             ctx.lineWidth = 1;
-            ctx.strokeStyle = 'blue';
+            ctx.strokeStyle = '#64c76c';
             const halfPixel = 0.5;
             ctx.beginPath();
             ctx.moveTo(x + halfPixel, y + pointRadius);
@@ -228,6 +231,7 @@ class LineChart extends Component {
         };
 
         const options = {
+            firstPointPaddinLeft: 10,
             hover: {
                 onHover: (e, charElement) => this.onHoverPoint(charElement),
             },
@@ -243,10 +247,6 @@ class LineChart extends Component {
                 },
             },
             tooltips: {
-                //custom: tooltipModel => {
-                //    tooltipModel.x = 70;
-                //    console.log('--> tooltipModel', tooltipModel);
-                //},
                 xAlign: 'center',
                 yAlign: 'bottom',
                 xPadding: 11,
