@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 
 import FilterPanel from './filter-panel';
+import Header from './header';
 import LineChart from './line-chart';
 
-import './object-analytic.scss';
+import styles from './object-analytic.scss';
 
 class ObjectAnalyticItem extends Component {
     state = {
@@ -21,10 +22,12 @@ class ObjectAnalyticItem extends Component {
         });
     };
     render() {
+        const { title } = this.props;
         const { activePanelId } = this.state;
 
         return (
-            <div>
+            <div className={styles.objectAnalyticItem}>
+                <Header title={title} />
                 <FilterPanel
                     onTouchTap={this.onPanelClick}
                     activePanelId={activePanelId}
@@ -34,30 +37,34 @@ class ObjectAnalyticItem extends Component {
                             label: 'Неделя',
                             amount: 200,
                             percent: 7,
+                            value: 200,
                         },
                         {
                             id: 2,
                             label: 'Месяц',
                             amount: 200,
                             percent: 0,
+                            value: 200,
                         },
                         {
                             id: 3,
                             label: 'Квартал',
                             amount: 1000,
                             percent: 7,
+                            value: 1000,
                         },
                         {
                             id: 4,
                             label: 'Год',
                             amount: 2000,
                             percent: -2,
+                            value: 2000,
                         },
                     ]}
                 />
                 <LineChart
                     width={1000}
-                    height={260}
+                    height={290}
                     redLineValue={this.state.redLine}
                     greenLineValue={this.state.greenLine}
                     data={this.state.data}

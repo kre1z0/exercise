@@ -8,17 +8,18 @@ import styles from './filter-panel.scss';
 const FilterPanel = ({ items, onTouchTap, activePanelId }) => {
     return (
         <ul className={styles.filterPanel}>
-            {items.map(({ label, percent, id }) => {
+            {items.map(item => {
+                const id = item.id;
                 const isActive = id === activePanelId;
                 const selected = cn('panel-item', { selected: isActive });
                 return (
                     <FilterPanelItem
                         key={id}
                         id={id}
+                        item={item}
                         onTouchTap={onTouchTap}
                         selected={selected}
                         isActive={isActive}
-                        percent={percent}
                     />
                 );
             })}

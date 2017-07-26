@@ -10,9 +10,7 @@ const FilterPanelItem = ({
     isActive,
     onTouchTap,
     selected,
-    percent,
-    id,
-    label,
+    item: { percent, id, label, value },
 }) => {
     return (
         <li
@@ -22,13 +20,15 @@ const FilterPanelItem = ({
             onTouchTap={() => onTouchTap(id)}
             className={selected}
         >
-            {label}
+            <span className="label">{label}:</span>
+            <span className="value">{value}</span>
             <span
+                className="percent"
                 style={{
                     color: isActive ? '#fff' : getColor(percent),
                 }}
             >
-                {percent}
+                ({percent}%)
             </span>
         </li>
     );

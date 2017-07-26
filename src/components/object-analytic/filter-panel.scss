@@ -1,28 +1,45 @@
+@import "../../assets/base/colors";
+
 .filterPanel {
   list-style-type: none;
   margin: 0;
+  padding: 0 30px;
   :global {
     .panel-item {
-      color: #fff;
+      font-weight: 500;
+      font-size: 1rem;
+      color: $darkGrey;
       display: inline-block;
-      padding: 15px;
-      border: 5px solid gray;
+      padding: 5px 10px;
+      border: 1px solid gray;
       border-left: none;
       cursor: pointer;
       &:first-child {
-        border-left: 5px solid gray;
-        border-radius: 10px 0 0 10px;
+        padding-left: 20px;
+        border-left: 1px solid gray;
+        border-radius: 17px 0 0 17px;
         &.selected {
           margin-left: 0;
         }
       }
       &:last-child {
-        border-radius: 0 10px 10px 0;
+        padding-right: 20px;
+        border-radius: 0 17px 17px 0;
       }
       &.selected {
-        margin-left: -5px;
-        border: 5px solid transparent;
+        color: #fff;
+        margin-left: -1px;
+        border: 1px solid transparent;
         cursor: default;
+      }
+      .label {
+        padding-right: 10px;
+      }
+      .value {
+        font-size: 0.857rem;
+      }
+      .percent {
+        font-size: 0.857rem;
       }
     }
   }

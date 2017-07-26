@@ -9,8 +9,8 @@ import './analytic.scss';
 class Home extends Component {
     render() {
         return (
-            <Col md="6" style={{ background: '#fff', padding: 0 }}>
-                <ObjectAnalyticItem />
+            <Col md="8" style={{ padding: 0 }}>
+                <ObjectAnalyticItem title="Объём выпуска продукции, кг" />
                 <ObjectAnalyticItem />
             </Col>
         );

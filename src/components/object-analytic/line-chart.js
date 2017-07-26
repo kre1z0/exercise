@@ -242,8 +242,8 @@ class LineChart extends Component {
                 padding: {
                     left: 30,
                     right: 30,
-                    top: 0,
-                    bottom: 0,
+                    top: 20,
+                    bottom: 10,
                 },
             },
             tooltips: {

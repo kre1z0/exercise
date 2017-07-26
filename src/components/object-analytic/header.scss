@@ -1,0 +1,12 @@
+@import "../../assets/base/colors";
+
+.objectAnalyticHeader {
+  padding: 0 30px;
+  :global {
+    .title {
+      color: $darkGrey;
+      font-size: 1.428rem;
+      font-weight: 500;
+    }
+  }
+}
