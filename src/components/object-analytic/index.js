@@ -8,6 +8,7 @@ import styles from './object-analytic.scss';
 
 class ObjectAnalyticItem extends Component {
     state = {
+        bgColor: '#fff',
         activePanelId: null,
         data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350],
         redLine: 20,
@@ -23,10 +24,15 @@ class ObjectAnalyticItem extends Component {
     };
     render() {
         const { title } = this.props;
-        const { activePanelId } = this.state;
+        const { activePanelId, bgColor } = this.state;
 
         return (
-            <div className={styles.objectAnalyticItem}>
+            <div
+                style={{
+                    backgroundColor: bgColor,
+                }}
+                className={styles.objectAnalyticItem}
+            >
                 <Header title={title} />
                 <FilterPanel
                     onTouchTap={this.onPanelClick}
@@ -63,6 +69,7 @@ class ObjectAnalyticItem extends Component {
                     ]}
                 />
                 <LineChart
+                    bgColor={bgColor}
                     width={1000}
                     height={290}
                     redLineValue={this.state.redLine}

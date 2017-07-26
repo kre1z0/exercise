@@ -1,50 +1,14 @@
 import React, { Component } from 'react';
 import { Line, Chart } from 'react-chartjs-2';
 
+import firstPointPaddingLeft from './plugins/first-point-padding-left';
 import styles from './line-chart.scss';
 
 class LineChart extends Component {
     _pixelRatio = window.devicePixelRatio;
 
     componentWillMount() {
-        Chart.pluginService.register({
-            afterUpdate: chart => {
-                if (chart.config.options.firstPointPaddinLeft) {
-                    const paddingLeft =
-                        chart.config.options.firstPointPaddinLeft;
-                    const dataFirstPoint = chart.getDatasetMeta(0).data[0];
-                    dataFirstPoint._model.x =
-                        chart.chartArea.left + paddingLeft;
-                }
-            },
-            afterDatasetsDraw: chart => {
-                if (chart.config.options.firstPointPaddinLeft) {
-                    const paddingLeft =
-                        chart.config.options.firstPointPaddinLeft;
-                    const datasets = chart.config.data.datasets[0];
-                    const borderWidth = datasets.borderWidth;
-                    const pointBorderWidth = datasets.pointBorderWidth;
-                    const borderColor = datasets.borderColor;
-                    const pointRadius = datasets.pointRadius;
-                    const dataFirstPoint = chart.getDatasetMeta(0).data[0];
-                    const y = dataFirstPoint._model.y;
-                    const ctx = chart.ctx;
-                    ctx.lineWidth = borderWidth;
-                    ctx.strokeStyle = borderColor;
-                    ctx.beginPath();
-                    ctx.moveTo(chart.chartArea.left + 1, y);
-                    ctx.lineTo(
-                        chart.chartArea.left +
-                            2 +
-                            paddingLeft -
-                            pointRadius -
-                            pointBorderWidth,
-                        y,
-                    );
-                    ctx.stroke();
-                }
-            },
-        });
+        Chart.pluginService.register(firstPointPaddingLeft);
     }
     componentDidMount() {
         const style = this.lineChart.chart_instance.canvas.style;
@@ -66,7 +30,6 @@ class LineChart extends Component {
     dashedLinesAndlabels() {
         const { labels, width, height } = this.props;
         const chart = this.lineChart.chart_instance;
-        const datasets = chart.config.data.datasets[0];
         const chartAreaLeft = chart.chartArea.left;
         const chartAreaRight = chart.chartArea.right;
         const chartAreaBottom = chart.chartArea.bottom;
@@ -124,17 +87,6 @@ class LineChart extends Component {
             xScale.right,
             xScale.bottom - xScale.height / 4,
         );
-        const firstPointY = chart.getDatasetMeta(0).data[0]._model.y;
-        const paddingLeft = chart.config.options.firstPointPaddinLeft;
-        ctx.beginPath();
-        ctx.fillStyle = datasets.backgroundColor;
-        ctx.rect(
-            chart.chartArea.left + 1,
-            firstPointY,
-            paddingLeft - 1,
-            chartAreaBottom - firstPointY,
-        );
-        ctx.fill();
     }
     drawYscale() {
         const { width, height } = this.props;
@@ -171,13 +123,15 @@ class LineChart extends Component {
     }
 
     onHoverPoint = ([charElement]) => {
-        const { width, height } = this.props;
-
+        const { width, height, labels } = this.props;
         const ctx = this.pointLine.getContext('2d');
-        const chart = this.lineChart.chart_instance;
 
         if (charElement) {
-            if (charElement._index === 0) {
+            ctx.clearRect(0, 0, width, height);
+            const chart = charElement._chart;
+            const index = charElement._index;
+            const ticks = charElement._xScale.ticks;
+            if (index === 0) {
                 charElement._chart.tooltip._options.xAlign = 'left';
                 charElement._chart.tooltip._options.yAlign = 'center';
             } else {
@@ -196,12 +150,21 @@ class LineChart extends Component {
             ctx.moveTo(x + halfPixel, y + pointRadius);
             ctx.lineTo(x + halfPixel, chartAreaBottom);
             ctx.stroke();
+            ticks[index] = '';
+            const xScale = charElement._xScale;
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'green';
+            ctx.font = '12px FedraSans, sans-serif';
+            ctx.fillText(labels[index], x, xScale.bottom - xScale.height / 4);
         } else {
+            const chart = this.lineChart.chart_instance;
             ctx.clearRect(0, 0, width, height);
+            chart.update();
         }
     };
     render() {
-        const { labels, data, width, height } = this.props;
+        const { labels, data, width, height, bgColor } = this.props;
         const maxNumberOfData = Math.max(...data);
         const stepSize = maxNumberOfData / 4;
         const max = maxNumberOfData + stepSize;
@@ -231,7 +194,9 @@ class LineChart extends Component {
         };
 
         const options = {
+            // plugins ↓
             firstPointPaddinLeft: 10,
+
             hover: {
                 onHover: (e, charElement) => this.onHoverPoint(charElement),
             },
@@ -283,7 +248,7 @@ class LineChart extends Component {
                         ticks: {
                             fontFamily: 'FedraSans, sans-serif',
                             fontSize: 12,
-                            fontColor: 'green',
+                            fontColor: 'gray',
                         },
                     },
                 ],
@@ -317,6 +282,9 @@ class LineChart extends Component {
         return (
             <div className={styles.lineChart}>
                 <canvas
+                    style={{
+                        backgroundColor: bgColor,
+                    }}
                     ref={c => {
                         this.yScaleCanvas = c;
                     }}
