@@ -1,8 +1,11 @@
+@import "../../assets/base/colors";
+
 .lineChart {
   position: relative;
   :global {
     .y-scale-canvas {
-      z-index: 2;
+      display: none;
+      z-index: 4;
       left: 0;
       position: absolute;
     }
@@ -12,9 +15,42 @@
       position: absolute;
       pointer-events:none;
     }
+    .dashed-line-canvas {
+      z-index: 1;
+    }
+    .point-line-canvas {
+      z-index: 3;
+    }
     .line-chart-wrapper {
       overflow-x: auto;
       position: relative;
+      display: flex;
+    }
+    .xScale {
+      padding: 10px 0 20px 0;
+      position: relative;
+      display: flex;
+      .xScale-item {
+        width: 0;
+        font-size: 0.857rem;
+        display: flex;
+        justify-content: center;
+        &:first-child {
+          justify-content: flex-start;
+        }
+        &:last-child {
+          justify-content: flex-end;
+        }
+      }
+    }
+    .yScale {
+      color: $coolGrayTwo;
+      font-size: 0.857rem;
+      display: flex;
+      flex-direction: column;
+      .yScale-item {
+
+      }
     }
   }
 }

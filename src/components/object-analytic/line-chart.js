@@ -1,92 +1,69 @@
 import React, { Component } from 'react';
 import { Line, Chart } from 'react-chartjs-2';
 
+import {
+    coolGreyTwo,
+    paleGrey,
+    softGreen,
+    redOrange,
+} from '../../assets/theme';
 import firstPointPaddingLeft from './plugins/first-point-padding-left';
+
 import styles from './line-chart.scss';
 
 class LineChart extends Component {
+    state = {
+        activePointIndex: null,
+    };
+
     _pixelRatio = window.devicePixelRatio;
 
     componentWillMount() {
-        Chart.pluginService.register(firstPointPaddingLeft);
+        Chart.pluginService.register([firstPointPaddingLeft]);
     }
     componentDidMount() {
         const style = this.lineChart.chart_instance.canvas.style;
+        //console.log('--> componentDidMount', this.lineChart.chart_instance);
         this.pointLine
             .getContext('2d')
             .scale(this._pixelRatio, this._pixelRatio);
-        this.lineCanvas
-            .getContext('2d')
-            .scale(this._pixelRatio, this._pixelRatio);
-        style.zIndex = 1;
+        style.zIndex = 2;
         style.position = 'relative';
         this.drawYscale();
-        this.dashedLinesAndlabels();
+        this.dashedLines();
     }
     componentDidUpdate() {
+        console.log('--> componentDidUpdate');
         this.drawYscale();
-        this.dashedLinesAndlabels();
+        this.dashedLines();
     }
-    dashedLinesAndlabels() {
-        const { labels, width, height } = this.props;
+    dashedLines() {
+        const { redLineValue, greenLineValue } = this.props;
+
         const chart = this.lineChart.chart_instance;
-        const chartAreaLeft = chart.chartArea.left;
-        const chartAreaRight = chart.chartArea.right;
-        const chartAreaBottom = chart.chartArea.bottom;
-        const ctx = this.lineCanvas.getContext('2d');
-        ctx.clearRect(0, 0, width, height);
-        const { greenLineValue, redLineValue } = this.props;
-        if (greenLineValue && redLineValue) {
-            ctx.setLineDash([5, 2]);
-            // ↓ fix canvas 1px lineWidth bug
-            const halfPixel = 0.5;
+        const ctx = this.dashedLineCanvas.getContext('2d');
+        ctx.clearRect(0, 0, chart.width, chart.height);
+        const left = chart.chartArea.left;
+        const bottom = chart.chartArea.bottom;
+        const right = chart.chartArea.right;
+        ctx.setLineDash([5, 2]);
+        ctx.lineWidth = 1;
+        // ↓ fix canvas 1px lineWidth bug
+        const halfPixel = 0.5;
 
-            // ↓ green line
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = 'green';
-            ctx.beginPath();
-            ctx.moveTo(
-                chartAreaLeft,
-                chartAreaBottom + halfPixel - greenLineValue,
-            );
-            ctx.lineTo(
-                chartAreaRight,
-                chartAreaBottom + halfPixel - greenLineValue,
-            );
-            ctx.stroke();
+        // ↓ red line
+        ctx.strokeStyle = redOrange;
+        ctx.beginPath();
+        ctx.moveTo(left, bottom + halfPixel - redLineValue);
+        ctx.lineTo(right, bottom + halfPixel - redLineValue);
+        ctx.stroke();
 
-            // ↓ red line
-            ctx.strokeStyle = 'red';
-            ctx.beginPath();
-            ctx.moveTo(
-                chartAreaLeft,
-                chartAreaBottom + halfPixel - redLineValue,
-            );
-            ctx.lineTo(
-                chartAreaRight,
-                chartAreaBottom + halfPixel - redLineValue,
-            );
-            ctx.stroke();
-        }
-        const firstTickLabel = labels[0];
-        const lastTickLabel = labels[labels.length - 1];
-        const xAxe = chart.config.options.scales.xAxes[0];
-        const xScale = chart.scales[xAxe.id];
-        ctx.textBaseline = 'alphabetic';
-        ctx.fillStyle = 'green';
-        ctx.font = '12px FedraSans, sans-serif';
-        ctx.textAlign = 'start';
-        ctx.fillText(
-            firstTickLabel,
-            xScale.left + 1,
-            xScale.bottom - xScale.height / 4,
-        );
-        ctx.textAlign = 'end';
-        ctx.fillText(
-            lastTickLabel,
-            xScale.right,
-            xScale.bottom - xScale.height / 4,
-        );
+        // ↓ green line
+        ctx.strokeStyle = softGreen;
+        ctx.beginPath();
+        ctx.moveTo(left, bottom + halfPixel - greenLineValue);
+        ctx.lineTo(right, bottom + halfPixel - greenLineValue);
+        ctx.stroke();
     }
     drawYscale() {
         const { width, height } = this.props;
@@ -123,51 +100,48 @@ class LineChart extends Component {
     }
 
     onHoverPoint = ([charElement]) => {
-        const { width, height, labels } = this.props;
         const ctx = this.pointLine.getContext('2d');
+        const chart = this.lineChart.chart_instance;
 
         if (charElement) {
-            ctx.clearRect(0, 0, width, height);
-            const chart = charElement._chart;
-            const index = charElement._index;
-            const ticks = charElement._xScale.ticks;
-            if (index === 0) {
-                charElement._chart.tooltip._options.xAlign = 'left';
-                charElement._chart.tooltip._options.yAlign = 'center';
+            const activePointIndex = charElement._index;
+
+            this.setState({ activePointIndex });
+
+            if (activePointIndex === 0) {
+                chart.tooltip._options.xAlign = 'left';
+                chart.tooltip._options.yAlign = 'center';
             } else {
-                charElement._chart.tooltip._options.xAlign = 'center';
-                charElement._chart.tooltip._options.yAlign = 'bottom';
+                chart.tooltip._options.xAlign = 'center';
+                chart.tooltip._options.yAlign = 'bottom';
             }
             const chartAreaBottom = chart.chartArea.bottom;
             const view = charElement._view;
-            const y = Math.floor(view.y);
-            const x = Math.floor(view.x);
+            const y = view.y;
+            const x = view.x;
             const pointRadius = charElement._view.radius;
             ctx.lineWidth = 1;
-            ctx.strokeStyle = '#64c76c';
+            ctx.strokeStyle = softGreen;
+
+            ctx.clearRect(0, 0, chart.width, chart.height);
             const halfPixel = 0.5;
             ctx.beginPath();
-            ctx.moveTo(x + halfPixel, y + pointRadius);
-            ctx.lineTo(x + halfPixel, chartAreaBottom);
+            ctx.moveTo(Math.floor(x) + halfPixel, y + pointRadius);
+            ctx.lineTo(Math.floor(x) + halfPixel, chartAreaBottom + 1);
             ctx.stroke();
-            ticks[index] = '';
-            const xScale = charElement._xScale;
-            ctx.textBaseline = 'alphabetic';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = 'green';
-            ctx.font = '12px FedraSans, sans-serif';
-            ctx.fillText(labels[index], x, xScale.bottom - xScale.height / 4);
         } else {
-            const chart = this.lineChart.chart_instance;
-            ctx.clearRect(0, 0, width, height);
-            chart.update();
+            this.setState({ activePointIndex: null });
+            ctx.clearRect(0, 0, chart.width, chart.height);
         }
     };
     render() {
         const { labels, data, width, height, bgColor } = this.props;
+        const { activePointIndex } = this.state;
+
         const maxNumberOfData = Math.max(...data);
         const stepSize = maxNumberOfData / 4;
         const max = maxNumberOfData + stepSize;
+        const paddingRight = 30;
         const dataSet = {
             labels: labels,
             datasets: [
@@ -176,17 +150,17 @@ class LineChart extends Component {
                     label: '',
                     lineTension: 0,
                     backgroundColor: 'rgba(100, 199, 108, 0.3)',
-                    borderColor: 'rgb(100, 199, 108)',
+                    borderColor: softGreen,
                     borderWidth: 3,
                     // Point ↓
                     pointStyle: 'circle',
                     pointRadius: 4,
-                    pointBorderColor: 'rgb(100, 199, 108)',
+                    pointBorderColor: softGreen,
                     pointBackgroundColor: '#fff',
                     pointBorderWidth: 3,
                     pointHoverRadius: 4,
                     pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgb(100, 199, 108)',
+                    pointHoverBorderColor: softGreen,
                     pointHoverBorderWidth: 3,
                     // Point ↑
                 },
@@ -197,21 +171,26 @@ class LineChart extends Component {
             // plugins ↓
             firstPointPaddinLeft: 10,
 
+            legend: {
+                display: false,
+            },
+
             hover: {
                 onHover: (e, charElement) => this.onHoverPoint(charElement),
             },
             animation: false,
             responsive: false,
-            backgroundColor: 'red',
             layout: {
                 padding: {
-                    left: 30,
-                    right: 30,
-                    top: 20,
-                    bottom: 10,
+                    left: 0,
+                    right: paddingRight,
+                    top: 0,
+                    bottom: 0,
                 },
             },
             tooltips: {
+                bodyFontFamily: 'FedraSans, sans-serif',
+                bodyFontSize: 14,
                 xAlign: 'center',
                 yAlign: 'bottom',
                 xPadding: 11,
@@ -223,9 +202,7 @@ class LineChart extends Component {
                     title: () => {},
                 },
                 displayColors: false,
-                backgroundColor: 'black',
-                bodyFontFamily: 'FedraSans, sans-serif',
-                bodyFontSize: 14,
+                backgroundColor: 'rgba(20, 23, 26, 0.85)',
             },
             scales: {
                 xAxes: [
@@ -233,22 +210,8 @@ class LineChart extends Component {
                         gridLines: {
                             display: false,
                         },
-                        afterBuildTicks: chart => {
-                            const copyTicksArray = chart.ticks.slice();
-                            // ↓ hide first tick xScale
-                            copyTicksArray.splice(0, 1, '');
-                            // ↓ hide last tick xScale
-                            copyTicksArray.splice(
-                                chart.ticks.length - 1,
-                                1,
-                                '',
-                            );
-                            chart.ticks = copyTicksArray;
-                        },
                         ticks: {
-                            fontFamily: 'FedraSans, sans-serif',
-                            fontSize: 12,
-                            fontColor: 'gray',
+                            fontSize: 0,
                         },
                     },
                 ],
@@ -257,8 +220,8 @@ class LineChart extends Component {
                         gridLines: {
                             drawTicks: false,
                             lineWidth: 1,
-                            color: 'red',
-                            zeroLineColor: 'red',
+                            color: paleGrey,
+                            zeroLineColor: paleGrey,
                         },
                         afterBuildTicks: chart => {
                             const copyTicksArray = chart.ticks.slice();
@@ -267,10 +230,7 @@ class LineChart extends Component {
                             chart.ticks = copyTicksArray;
                         },
                         ticks: {
-                            fontSize: 12,
-                            fontFamily: 'FedraSans, sans-serif',
-                            fontColor: 'red',
-                            padding: 10,
+                            display: false,
                             max: max,
                             min: 0,
                             stepSize: stepSize,
@@ -291,40 +251,82 @@ class LineChart extends Component {
                     className="y-scale-canvas"
                 />
                 <div className="line-chart-wrapper">
-                    <Line
-                        ref={c => {
-                            this.lineChart = c;
-                        }}
-                        width={width}
-                        height={height}
-                        legend={{ display: false }}
-                        options={options}
-                        data={dataSet}
-                    />
-                    <canvas
-                        width={width * this._pixelRatio}
-                        height={height * this._pixelRatio}
-                        style={{
-                            width: width,
-                            height: height,
-                        }}
-                        ref={c => {
-                            this.lineCanvas = c;
-                        }}
-                        className="dashed-line-canvas"
-                    />
-                    <canvas
-                        width={width * this._pixelRatio}
-                        height={height * this._pixelRatio}
-                        style={{
-                            width: width,
-                            height: height,
-                        }}
-                        ref={c => {
-                            this.pointLine = c;
-                        }}
-                        className="point-line-canvas"
-                    />
+                    <div className="yScale">
+                        <span className="yScale-item">
+                            200
+                        </span>
+                        <span className="yScale-item">
+                            150
+                        </span>
+                        <span className="yScale-item">
+                            100
+                        </span>
+                        <span className="yScale-item">
+                            50
+                        </span>
+                        <span className="yScale-item">
+                            0
+                        </span>
+                    </div>
+                    <div>
+                        <Line
+                            ref={c => {
+                                this.lineChart = c;
+                            }}
+                            width={width}
+                            height={height}
+                            options={options}
+                            data={dataSet}
+                        />
+                        <canvas
+                            width={width * this._pixelRatio}
+                            height={height * this._pixelRatio}
+                            style={{
+                                width: width,
+                                height: height,
+                            }}
+                            ref={c => {
+                                this.dashedLineCanvas = c;
+                            }}
+                            className="dashed-line-canvas"
+                        />
+                        <canvas
+                            width={width * this._pixelRatio}
+                            height={height * this._pixelRatio}
+                            style={{
+                                width: width,
+                                height: height,
+                            }}
+                            ref={c => {
+                                this.pointLine = c;
+                            }}
+                            className="point-line-canvas"
+                        />
+                        <div className="xScale">
+                            {labels.map((label, index) => {
+                                const translate =
+                                    index *
+                                    (width - paddingRight) /
+                                    (labels.length - 1);
+                                return (
+                                    <span
+                                        style={{
+                                            color: index === activePointIndex
+                                                ? softGreen
+                                                : coolGreyTwo,
+                                            transform: `translateX(${translate}px)`,
+                                        }}
+                                        className="xScale-item"
+                                        key={`${label}-${index}`}
+                                    >
+                                        <div>
+                                            {label}
+                                        </div>
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
             </div>
         );

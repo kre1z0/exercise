@@ -7,6 +7,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Routes from './routes';
 import App from './containers/App';
 import 'bootstrap/dist/css/bootstrap.css';
+import './assets/fonts/fonts.scss';
 import './assets/base/main.scss';
 import { theme } from './assets/theme';
 

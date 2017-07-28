@@ -11,7 +11,7 @@ class Home extends Component {
         return (
             <Col md="8" style={{ padding: 0 }}>
                 <ObjectAnalyticItem title="Объём выпуска продукции, кг" />
-                <ObjectAnalyticItem />
+                {/*<ObjectAnalyticItem />*/}
             </Col>
         );
     }

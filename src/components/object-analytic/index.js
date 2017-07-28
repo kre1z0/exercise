@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import FilterPanel from './filter-panel';
-import Header from './header';
+import ObjectAnalyticHeader from './object-analytic-header';
 import LineChart from './line-chart';
 
 import styles from './object-analytic.scss';
@@ -10,16 +10,40 @@ class ObjectAnalyticItem extends Component {
     state = {
         bgColor: '#fff',
         activePanelId: null,
-        data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350],
+        data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350, 455],
+        labels: [
+            'Янв',
+            'Фев',
+            'Мар',
+            'Апр',
+            'Май',
+            'Июн',
+            'Июл',
+            'Авг',
+            'Сен',
+            'Окт',
+            'Ноя',
+            'Дек',
+        ],
         redLine: 20,
         greenLine: 100,
     };
     onPanelClick = id => {
         this.setState({
-            redLine: 40,
+            redLine: 40 * 2,
             greenLine: id * 50,
             activePanelId: id,
-            data: [444, 59, 25, 500, 545, 45, 77, 77, 55, 55, 350, 250],
+            data: [444, 59, 25, 500, 545, 45, 77, 77],
+            labels: [
+                'I/2016',
+                'II/2016',
+                'III/2016',
+                'IV/2016',
+                'I/2017',
+                'II/2017',
+                'III/2017',
+                'IV/2017',
+            ],
         });
     };
     render() {
@@ -33,7 +57,7 @@ class ObjectAnalyticItem extends Component {
                 }}
                 className={styles.objectAnalyticItem}
             >
-                <Header title={title} />
+                <ObjectAnalyticHeader title={title} />
                 <FilterPanel
                     onTouchTap={this.onPanelClick}
                     activePanelId={activePanelId}
@@ -75,20 +99,7 @@ class ObjectAnalyticItem extends Component {
                     redLineValue={this.state.redLine}
                     greenLineValue={this.state.greenLine}
                     data={this.state.data}
-                    labels={[
-                        'Янв',
-                        'Фев',
-                        'Мар',
-                        'Апр',
-                        'Май',
-                        'Июн',
-                        'Июл',
-                        'Авг',
-                        'Сен',
-                        'Окт',
-                        'Ноя',
-                        'Дек',
-                    ]}
+                    labels={this.state.labels}
                 />
             </div>
         );

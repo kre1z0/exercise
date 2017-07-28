@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './header.scss';
 
-const Header = ({ title }) => {
+const ObjectAnalyticHeader = ({ title }) => {
     return (
         <div className={styles.objectAnalyticHeader}>
             <h2 className="title">{title}</h2>
@@ -10,4 +10,4 @@ const Header = ({ title }) => {
     );
 };
 
-export default Header;
+export default ObjectAnalyticHeader;
