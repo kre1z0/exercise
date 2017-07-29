@@ -1,19 +1,29 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Line, Chart } from 'react-chartjs-2';
+import PropTypes from 'prop-types';
 
-import {
-    coolGreyTwo,
-    paleGrey,
-    softGreen,
-    redOrange,
-} from '../../assets/theme';
+import { paleGrey, softGreen, redOrange } from '../../assets/theme';
 import firstPointPaddingLeft from './plugins/first-point-padding-left';
+import XScale from './x-scale';
+import YScale from './y-scale';
 
 import styles from './line-chart.scss';
 
-class LineChart extends Component {
+class LineChart extends PureComponent {
+    static defaultProps = {
+        height: 233,
+        data: [],
+        labels: [],
+    };
+
+    static propTypes = {
+        data: PropTypes.array.isRequired,
+    };
+
     state = {
         activePointIndex: null,
+        scrolledToEnd: false,
+        yScaleTicks: [],
     };
 
     _pixelRatio = window.devicePixelRatio;
@@ -21,24 +31,38 @@ class LineChart extends Component {
     componentWillMount() {
         Chart.pluginService.register([firstPointPaddingLeft]);
     }
+
     componentDidMount() {
+        this.setStyles();
+        this.dashedLines();
+    }
+
+    componentDidUpdate() {
+        this.setStyles();
+        this.dashedLines();
+        const chart = this.lineChart.chart_instance;
+        const yAxis = chart.config.options.scales.yAxes[0];
+        const yScaleTicks = chart.scales[yAxis.id].ticks;
+        console.log('--> componentDidUpdate', yScaleTicks);
+        console.log('--> chart', chart);
+    }
+
+    setStyles() {
         const style = this.lineChart.chart_instance.canvas.style;
-        //console.log('--> componentDidMount', this.lineChart.chart_instance);
         this.pointLine
+            .getContext('2d')
+            .scale(this._pixelRatio, this._pixelRatio);
+        this.dashedLineCanvas
             .getContext('2d')
             .scale(this._pixelRatio, this._pixelRatio);
         style.zIndex = 2;
         style.position = 'relative';
-        this.drawYscale();
-        this.dashedLines();
     }
-    componentDidUpdate() {
-        console.log('--> componentDidUpdate');
-        this.drawYscale();
-        this.dashedLines();
-    }
+
     dashedLines() {
-        const { redLineValue, greenLineValue } = this.props;
+        const { redLineValue, greenLineValue, height, max } = this.props;
+
+        const getPixels = value => Math.floor(height / max * value);
 
         const chart = this.lineChart.chart_instance;
         const ctx = this.dashedLineCanvas.getContext('2d');
@@ -54,49 +78,16 @@ class LineChart extends Component {
         // ↓ red line
         ctx.strokeStyle = redOrange;
         ctx.beginPath();
-        ctx.moveTo(left, bottom + halfPixel - redLineValue);
-        ctx.lineTo(right, bottom + halfPixel - redLineValue);
+        ctx.moveTo(left, bottom + halfPixel - getPixels(redLineValue));
+        ctx.lineTo(right, bottom + halfPixel - getPixels(redLineValue));
         ctx.stroke();
 
         // ↓ green line
         ctx.strokeStyle = softGreen;
         ctx.beginPath();
-        ctx.moveTo(left, bottom + halfPixel - greenLineValue);
-        ctx.lineTo(right, bottom + halfPixel - greenLineValue);
+        ctx.moveTo(left, bottom + halfPixel - getPixels(greenLineValue));
+        ctx.lineTo(right, bottom + halfPixel - getPixels(greenLineValue));
         ctx.stroke();
-    }
-    drawYscale() {
-        const { width, height } = this.props;
-        const chart = this.lineChart.chart_instance;
-        const ctx = chart.ctx;
-        const yAxe = chart.config.options.scales.yAxes[0];
-        const yScale = chart.scales[yAxe.id];
-        const sourceCanvas = ctx.canvas;
-        const targetCtx = this.yScaleCanvas.getContext('2d');
-        targetCtx.clearRect(0, 0, width, height);
-        const leftPaddingLayout = chart.config.options.layout.padding.left;
-        // ↓ +1px border and 35 padding layout
-        const copyWidth = yScale.width + 1 + leftPaddingLayout;
-        const copyHeight = chart.height;
-        const yScaleWidth = copyWidth * this._pixelRatio;
-        const yScaleHeight = copyHeight * this._pixelRatio;
-        // ↓ Canvas not sizing to window inner width & height
-        targetCtx.canvas.width = yScaleWidth;
-        targetCtx.canvas.height = yScaleHeight;
-        targetCtx.canvas.style.width = copyWidth + 'px';
-        targetCtx.canvas.style.height = copyHeight + 'px';
-
-        targetCtx.drawImage(
-            sourceCanvas,
-            0,
-            0,
-            yScaleWidth,
-            yScaleHeight,
-            0,
-            0,
-            yScaleWidth,
-            yScaleHeight,
-        );
     }
 
     onHoverPoint = ([charElement]) => {
@@ -134,14 +125,29 @@ class LineChart extends Component {
             ctx.clearRect(0, 0, chart.width, chart.height);
         }
     };
-    render() {
-        const { labels, data, width, height, bgColor } = this.props;
-        const { activePointIndex } = this.state;
 
-        const maxNumberOfData = Math.max(...data);
-        const stepSize = maxNumberOfData / 4;
-        const max = maxNumberOfData + stepSize;
+    onBodyScroll = ({ target }) => {
+        if (target.scrollWidth === target.scrollLeft + target.clientWidth) {
+            this.setState({
+                scrolledToEnd: true,
+            });
+        } else {
+            this.setState({
+                scrolledToEnd: false,
+            });
+        }
+    };
+
+    render() {
+        const { labels, data, height, id, max, stepSize } = this.props;
+        const { activePointIndex, scrolledToEnd, yScaleTicks } = this.state;
+
         const paddingRight = 30;
+        const paddingTop = 20;
+        const paddingBottom = 10;
+        const pointWidth = id === 1 || id === 2 ? 85 : 180;
+        const width = labels.length * pointWidth - paddingRight;
+
         const dataSet = {
             labels: labels,
             datasets: [
@@ -168,9 +174,10 @@ class LineChart extends Component {
         };
 
         const options = {
-            // plugins ↓
+            // plugin ↓
             firstPointPaddinLeft: 10,
 
+            maintainAspectRatio: false,
             legend: {
                 display: false,
             },
@@ -184,8 +191,8 @@ class LineChart extends Component {
                 padding: {
                     left: 0,
                     right: paddingRight,
-                    top: 0,
-                    bottom: 0,
+                    top: paddingTop,
+                    bottom: paddingBottom,
                 },
             },
             tooltips: {
@@ -207,12 +214,7 @@ class LineChart extends Component {
             scales: {
                 xAxes: [
                     {
-                        gridLines: {
-                            display: false,
-                        },
-                        ticks: {
-                            fontSize: 0,
-                        },
+                        display: false,
                     },
                 ],
                 yAxes: [
@@ -241,35 +243,22 @@ class LineChart extends Component {
         };
         return (
             <div className={styles.lineChart}>
-                <canvas
-                    style={{
-                        backgroundColor: bgColor,
-                    }}
-                    ref={c => {
-                        this.yScaleCanvas = c;
-                    }}
-                    className="y-scale-canvas"
+                <YScale
+                    paddingBottom={paddingBottom}
+                    stepSize={stepSize}
+                    data={data}
+                    yScaleTicks={yScaleTicks}
+                    height={height}
+                    paddingTop={paddingTop}
                 />
-                <div className="line-chart-wrapper">
-                    <div className="yScale">
-                        <span className="yScale-item">
-                            200
-                        </span>
-                        <span className="yScale-item">
-                            150
-                        </span>
-                        <span className="yScale-item">
-                            100
-                        </span>
-                        <span className="yScale-item">
-                            50
-                        </span>
-                        <span className="yScale-item">
-                            0
-                        </span>
-                    </div>
-                    <div>
+                <div
+                    onScroll={this.onBodyScroll}
+                    className="line-chart-container"
+                >
+                    <div className="line-chart-block">
                         <Line
+                            /* need for rerender width */
+                            key={id}
                             ref={c => {
                                 this.lineChart = c;
                             }}
@@ -302,32 +291,22 @@ class LineChart extends Component {
                             }}
                             className="point-line-canvas"
                         />
-                        <div className="xScale">
-                            {labels.map((label, index) => {
-                                const translate =
-                                    index *
-                                    (width - paddingRight) /
-                                    (labels.length - 1);
-                                return (
-                                    <span
-                                        style={{
-                                            color: index === activePointIndex
-                                                ? softGreen
-                                                : coolGreyTwo,
-                                            transform: `translateX(${translate}px)`,
-                                        }}
-                                        className="xScale-item"
-                                        key={`${label}-${index}`}
-                                    >
-                                        <div>
-                                            {label}
-                                        </div>
-                                    </span>
-                                );
-                            })}
-                        </div>
+                        <XScale
+                            labels={labels}
+                            paddingRight={paddingRight}
+                            width={width}
+                            activePointIndex={activePointIndex}
+                        />
                     </div>
                 </div>
+                <div
+                    style={{
+                        display: scrolledToEnd ? 'none' : 'block',
+                        width: paddingRight,
+                        height: height,
+                    }}
+                    className="line-chart-helper"
+                />
             </div>
         );
     }

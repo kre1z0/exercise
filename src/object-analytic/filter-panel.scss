@@ -1,44 +1,51 @@
 @import "../../assets/base/colors";
 
 .filterPanel {
-  list-style-type: none;
-  margin: 0;
-  padding: 0 30px 20px 30px;
+  padding: 0 30px 0 30px;
+  display: flex;
   :global {
+
     .panel-item {
-      font-weight: 500;
       font-size: 1rem;
       color: $darkGrey;
-      display: inline-block;
-      padding: 5px 10px;
-      border: 1px solid gray;
+      padding: 9px 10px;
+      border: 1px solid #e6ebf0;
       border-left: none;
       cursor: pointer;
+
       &:first-child {
         padding-left: 20px;
-        border-left: 1px solid gray;
+        border-left: 1px solid #e6ebf0;
         border-radius: 17px 0 0 17px;
         &.selected {
           margin-left: 0;
         }
       }
+
       &:last-child {
         padding-right: 20px;
         border-radius: 0 17px 17px 0;
       }
+
       &.selected {
         color: #fff;
         margin-left: -1px;
         border: 1px solid transparent;
         cursor: default;
       }
+
       .label {
+        font-weight: 500;
         padding-right: 10px;
       }
+
       .value {
+        font-weight: 600;
         font-size: 0.857rem;
       }
+
       .percent {
+        font-weight: 600;
         font-size: 0.857rem;
       }
     }

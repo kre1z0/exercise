@@ -1,9 +1,10 @@
 import React from 'react';
+import { softGreen, coolGreyTwo, redOrange } from '../../assets/theme';
 
 const getColor = percent => {
-    if (percent > 0) return 'green';
-    else if (percent === 0) return 'gray';
-    else return 'red';
+    if (percent > 0) return softGreen;
+    else if (percent === 0) return coolGreyTwo;
+    else return redOrange;
 };
 
 const FilterPanelItem = ({
@@ -13,7 +14,7 @@ const FilterPanelItem = ({
     item: { percent, id, label, value },
 }) => {
     return (
-        <li
+        <div
             style={{
                 backgroundColor: isActive ? getColor(percent) : 'transparent',
             }}
@@ -30,7 +31,7 @@ const FilterPanelItem = ({
             >
                 ({percent}%)
             </span>
-        </li>
+        </div>
     );
 };
 

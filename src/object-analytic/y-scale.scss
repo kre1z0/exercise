@@ -1,0 +1,40 @@
+@import "../../assets/base/colors";
+@import "./line-chart";
+
+.yScale {
+  width: 70px;
+  background-color: $bgColor;
+  user-select: none;
+  z-index: 5;
+  color: $coolGrayTwo;
+  font-size: 0.857rem;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-right: 1px solid $paleGrey;
+  :global {
+    .yScale-item {
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 10px;
+      display: flex;
+      width: 70px;
+      height: 0;
+      z-index: 2;
+    }
+
+    .yScale-helper {
+      height: $xScaleHeight;
+      position: absolute;
+      width: 100%;
+      background-color: $bgColor;
+      bottom: 0;
+      left: 0;
+      transform: translateY(100%);
+      z-index: 1;
+    }
+  }
+}

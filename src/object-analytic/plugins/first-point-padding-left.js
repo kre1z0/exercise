@@ -1,13 +1,19 @@
 export default {
     afterUpdate: chart => {
-        if (chart.config.options.firstPointPaddinLeft) {
+        if (
+            chart.config.options.firstPointPaddinLeft &&
+            chart.config.data.datasets[0].data.length !== 0
+        ) {
             const dataFirstPoint = chart.getDatasetMeta(0).data[0];
             const paddingLeft = chart.config.options.firstPointPaddinLeft;
             dataFirstPoint._model.x = chart.chartArea.left + paddingLeft;
         }
     },
     beforeDatasetsDraw: chart => {
-        if (chart.config.options.firstPointPaddinLeft) {
+        if (
+            chart.config.options.firstPointPaddinLeft &&
+            chart.config.data.datasets[0].data.length !== 0
+        ) {
             const ctx = chart.ctx;
             const paddingLeft = chart.config.options.firstPointPaddinLeft;
             const datasets = chart.config.data.datasets[0];

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './header.scss';
+import styles from './object-analytic-header.scss';
 
 const ObjectAnalyticHeader = ({ title }) => {
     return (

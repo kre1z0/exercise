@@ -8,9 +8,8 @@ import styles from './object-analytic.scss';
 
 class ObjectAnalyticItem extends Component {
     state = {
-        bgColor: '#fff',
-        activePanelId: null,
-        data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350, 455],
+        activePanelId: 1,
+        data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350],
         labels: [
             'Янв',
             'Фев',
@@ -33,7 +32,7 @@ class ObjectAnalyticItem extends Component {
             redLine: 40 * 2,
             greenLine: id * 50,
             activePanelId: id,
-            data: [444, 59, 25, 500, 545, 45, 77, 77],
+            data: [444 * id, 59, 25, 500, 545, 45, 77, 77],
             labels: [
                 'I/2016',
                 'II/2016',
@@ -48,15 +47,14 @@ class ObjectAnalyticItem extends Component {
     };
     render() {
         const { title } = this.props;
-        const { activePanelId, bgColor } = this.state;
+        const { activePanelId, data } = this.state;
+
+        const maxNumberOfData = Math.max(...data);
+        const stepSize = maxNumberOfData / 4;
+        const max = maxNumberOfData + stepSize;
 
         return (
-            <div
-                style={{
-                    backgroundColor: bgColor,
-                }}
-                className={styles.objectAnalyticItem}
-            >
+            <div className={styles.objectAnalyticItem}>
                 <ObjectAnalyticHeader title={title} />
                 <FilterPanel
                     onTouchTap={this.onPanelClick}
@@ -65,37 +63,33 @@ class ObjectAnalyticItem extends Component {
                         {
                             id: 1,
                             label: 'Неделя',
-                            amount: 200,
                             percent: 7,
                             value: 200,
                         },
                         {
                             id: 2,
                             label: 'Месяц',
-                            amount: 200,
                             percent: 0,
                             value: 200,
                         },
                         {
                             id: 3,
                             label: 'Квартал',
-                            amount: 1000,
                             percent: 7,
                             value: 1000,
                         },
                         {
                             id: 4,
                             label: 'Год',
-                            amount: 2000,
                             percent: -2,
                             value: 2000,
                         },
                     ]}
                 />
                 <LineChart
-                    bgColor={bgColor}
-                    width={1000}
-                    height={290}
+                    max={max}
+                    stepSize={stepSize}
+                    id={activePanelId}
                     redLineValue={this.state.redLine}
                     greenLineValue={this.state.greenLine}
                     data={this.state.data}

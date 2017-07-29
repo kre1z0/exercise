@@ -7,7 +7,7 @@ import styles from './filter-panel.scss';
 
 const FilterPanel = ({ items, onTouchTap, activePanelId }) => {
     return (
-        <ul className={styles.filterPanel}>
+        <div className={styles.filterPanel}>
             {items.map(item => {
                 const id = item.id;
                 const isActive = id === activePanelId;
@@ -23,7 +23,7 @@ const FilterPanel = ({ items, onTouchTap, activePanelId }) => {
                     />
                 );
             })}
-        </ul>
+        </div>
     );
 };
 

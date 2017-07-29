@@ -1,0 +1,54 @@
+@import "../../assets/base/colors";
+@import "./object-analytic";
+
+$xScaleHeight: 41px;
+$xScaleHelperHeight: 20px;
+
+.lineChart {
+  position: relative;
+  :global {
+
+    .point-line-canvas,
+    .dashed-line-canvas {
+      top: 0;
+      position: absolute;
+      pointer-events:none;
+    }
+
+    .dashed-line-canvas {
+      z-index: 1;
+    }
+
+    .point-line-canvas {
+      z-index: 3;
+    }
+
+    .line-chart-container {
+      overflow-x: auto;
+      position: relative;
+      display: flex;
+      .line-chart-block {
+        padding-left: 69px;
+      }
+    }
+
+    .line-chart-helper {
+      background-color: $bgColor;
+      z-index: 5;
+      top: 0;
+      position: absolute;
+      right: 0;
+      &:after {
+        content: '';
+        width: 100%;
+        height: $xScaleHeight;
+        display: block;
+        bottom: 0;
+        position: absolute;
+        transform: translateY(100%);
+        right: 0;
+        background-color: #fff;
+      }
+    }
+  }
+}

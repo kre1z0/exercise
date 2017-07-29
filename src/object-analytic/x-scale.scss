@@ -1,0 +1,21 @@
+@import "./line-chart";
+
+.xScale {
+  height: $xScaleHeight;
+  position: relative;
+  display: flex;
+  :global {
+    .xScale-item {
+      width: 0;
+      font-size: 0.857rem;
+      display: flex;
+      justify-content: center;
+      &:first-child {
+        justify-content: flex-start;
+      }
+      &:last-child {
+        justify-content: flex-end;
+      }
+    }
+  }
+}
