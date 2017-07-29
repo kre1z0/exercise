@@ -196,7 +196,7 @@ class LineChart extends PureComponent {
                 },
             },
             tooltips: {
-                bodyFontFamily: 'FedraSans, sans-serif',
+                //bodyFontFamily: 'FedraSans, sans-serif',
                 bodyFontSize: 14,
                 xAlign: 'center',
                 yAlign: 'bottom',
