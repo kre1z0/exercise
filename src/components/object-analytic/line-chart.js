@@ -257,6 +257,7 @@ class LineChart extends PureComponent {
                 >
                     <div className="line-chart-block">
                         <Line
+                            legend={{ display: false }}
                             /* need for rerender width */
                             key={id}
                             ref={c => {
