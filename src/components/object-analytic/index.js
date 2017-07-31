@@ -24,9 +24,10 @@ class ObjectAnalyticItem extends Component {
             'Ноя',
             'Дек',
         ],
-        redLine: 20,
-        greenLine: 100,
+        redLine: 150,
+        greenLine: 300,
     };
+
     onPanelClick = id => {
         this.setState({
             redLine: 40 * 2,
@@ -45,13 +46,10 @@ class ObjectAnalyticItem extends Component {
             ],
         });
     };
+
     render() {
         const { title } = this.props;
-        const { activePanelId, data } = this.state;
-
-        const maxNumberOfData = Math.max(...data);
-        const stepSize = maxNumberOfData / 4;
-        const max = maxNumberOfData + stepSize;
+        const { activePanelId, data, greenLine, redLine, labels } = this.state;
 
         return (
             <div className={styles.objectAnalyticItem}>
@@ -87,13 +85,11 @@ class ObjectAnalyticItem extends Component {
                     ]}
                 />
                 <LineChart
-                    max={max}
-                    stepSize={stepSize}
                     id={activePanelId}
-                    redLineValue={this.state.redLine}
-                    greenLineValue={this.state.greenLine}
-                    data={this.state.data}
-                    labels={this.state.labels}
+                    redLineValue={redLine}
+                    greenLineValue={greenLine}
+                    data={data}
+                    labels={labels}
                 />
             </div>
         );

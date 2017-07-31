@@ -60,16 +60,17 @@ class LineChart extends PureComponent {
     }
 
     dashedLines() {
-        const { redLineValue, greenLineValue, height, max } = this.props;
-
-        const getPixels = value => Math.floor(height / max * value);
+        const { redLineValue, greenLineValue, max } = this.props;
 
         const chart = this.lineChart.chart_instance;
-        const ctx = this.dashedLineCanvas.getContext('2d');
-        ctx.clearRect(0, 0, chart.width, chart.height);
+        const top = chart.chartArea.top;
         const left = chart.chartArea.left;
         const bottom = chart.chartArea.bottom;
         const right = chart.chartArea.right;
+        const getPixels = value => Math.round((bottom - top) / max * value);
+
+        const ctx = this.dashedLineCanvas.getContext('2d');
+        ctx.clearRect(0, 0, chart.width, chart.height);
         ctx.setLineDash([5, 2]);
         ctx.lineWidth = 1;
         // ↓ fix canvas 1px lineWidth bug
@@ -139,7 +140,7 @@ class LineChart extends PureComponent {
     };
 
     render() {
-        const { labels, data, height, id, max, stepSize } = this.props;
+        const { labels, data, height, id } = this.props;
         const { activePointIndex, scrolledToEnd, yScaleTicks } = this.state;
 
         const paddingRight = 30;
@@ -147,6 +148,41 @@ class LineChart extends PureComponent {
         const paddingBottom = 10;
         const pointWidth = id === 1 || id === 2 ? 85 : 180;
         const width = labels.length * pointWidth - paddingRight;
+
+        const getMaxTick = data => {
+            const max = Math.max(...data);
+            const lengthOfNumber = Math.floor(max).toString().length;
+            const array = Array.from({ length: lengthOfNumber }, (_, index) => {
+                if (index === 0) return 1;
+                else return 0;
+            });
+            const operator = Number(array.join(''));
+            return Math.ceil(max / operator) * operator;
+        };
+        const decimalAdjust = value => {
+            let exp = Math.floor(value).toString().length - 1;
+            if (typeof exp === 'undefined' || +exp === 0) {
+                return Math.ceil(value);
+            }
+            value = +value;
+            exp = +exp;
+            if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+                return NaN;
+            }
+            value = value.toString().split('e');
+            value = Math.ceil(
+                +(value[0] + 'e' + (value[1] ? +value[1] - exp : -exp)),
+            );
+            value = value.toString().split('e');
+            value = +(value[0] + 'e' + (value[1] ? +value[1] + exp : exp));
+            return value;
+        };
+        console.log('-->', decimalAdjust(888));
+
+        const yTicksAmount = 5;
+        const maxNumberOfData = getMaxTick(data);
+        const stepSize = maxNumberOfData / (yTicksAmount - 1);
+        const max = maxNumberOfData + stepSize;
 
         const dataSet = {
             labels: labels,
@@ -196,7 +232,7 @@ class LineChart extends PureComponent {
                 },
             },
             tooltips: {
-                //bodyFontFamily: 'FedraSans, sans-serif',
+                bodyFontFamily: 'FedraSans, sans-serif',
                 bodyFontSize: 14,
                 xAlign: 'center',
                 yAlign: 'bottom',
@@ -244,6 +280,7 @@ class LineChart extends PureComponent {
         return (
             <div className={styles.lineChart}>
                 <YScale
+                    yTicksAmount={yTicksAmount}
                     paddingBottom={paddingBottom}
                     stepSize={stepSize}
                     data={data}
@@ -257,7 +294,6 @@ class LineChart extends PureComponent {
                 >
                     <div className="line-chart-block">
                         <Line
-                            legend={{ display: false }}
                             /* need for rerender width */
                             key={id}
                             ref={c => {

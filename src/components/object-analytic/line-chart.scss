@@ -1,7 +1,7 @@
 @import "../../assets/base/colors";
-@import "object-analytic";
+@import "./object-analytic";
 
-$xScaleHeight: 41px;
+$xScaleHeight: 31px;
 $xScaleHelperHeight: 20px;
 
 .lineChart {
@@ -24,7 +24,7 @@ $xScaleHelperHeight: 20px;
     }
 
     .line-chart-container {
-      overflow-x: auto;
+      overflow-x: scroll;
       position: relative;
       display: flex;
       .line-chart-block {

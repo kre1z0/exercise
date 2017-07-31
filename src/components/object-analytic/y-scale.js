@@ -2,8 +2,13 @@ import React from 'react';
 
 import styles from './y-scale.scss';
 
-const YScale = ({ height, paddingTop, paddingBottom, stepSize }) => {
-    const ticksAmount = 5;
+const YScale = ({
+    height,
+    paddingTop,
+    paddingBottom,
+    stepSize,
+    yTicksAmount,
+}) => {
     return (
         <div
             style={{
@@ -13,9 +18,11 @@ const YScale = ({ height, paddingTop, paddingBottom, stepSize }) => {
             className={styles.yScale}
         >
             <div className="yScale-helper" />
-            {Array.from({ length: ticksAmount }, (_, index) => {
+            {Array.from({ length: yTicksAmount }, (_, index) => {
                 const translate =
-                    index * (height - paddingTop - paddingBottom) / ticksAmount;
+                    index *
+                    (height - paddingTop - paddingBottom) /
+                    yTicksAmount;
                 return (
                     <span
                         style={{
