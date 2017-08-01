@@ -42,13 +42,13 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: $mineShaftDark;
+    background: $silverThree;
     border: 2px solid #fff;
     &:hover {
       background: #989fa8;
     }
     &:active {
-      background: #797f86;
+      background: $rollingStone;
     }
   }
 }

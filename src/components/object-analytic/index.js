@@ -9,7 +9,7 @@ import styles from './object-analytic.scss';
 class ObjectAnalyticItem extends Component {
     state = {
         activePanelId: 1,
-        data: [333, 59, 710, 56, 55, 180, 198, 125, 25, 101, 350],
+        data: [157, 1, 35, 40, 57, 43, 101, 125, 133, 98, 68],
         labels: [
             'Янв',
             'Фев',
@@ -24,13 +24,13 @@ class ObjectAnalyticItem extends Component {
             'Ноя',
             'Дек',
         ],
-        redLine: 150,
-        greenLine: 300,
+        redLine: 88,
+        greenLine: 157,
     };
 
     onPanelClick = id => {
         this.setState({
-            redLine: 40 * 2,
+            redLine: id * 25,
             greenLine: id * 50,
             activePanelId: id,
             data: [444 * id, 59, 25, 500, 545, 45, 77, 77],

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Line, Chart } from 'react-chartjs-2';
 import PropTypes from 'prop-types';
+import ceil from 'lodash/ceil';
 
 import { paleGrey, softGreen, redOrange } from '../../assets/theme';
 import firstPointPaddingLeft from './plugins/first-point-padding-left';
@@ -8,6 +9,19 @@ import XScale from './x-scale';
 import YScale from './y-scale';
 
 import styles from './line-chart.scss';
+
+const ceilMaxNumberOfData = data => {
+    const max = Math.max(...data);
+    const lengthOfNumber = Math.floor(max).toString().length;
+
+    let operator = -lengthOfNumber;
+
+    if (lengthOfNumber === 1 || lengthOfNumber === 2) operator += 0;
+    else if (lengthOfNumber === 3) operator += 1;
+    else operator += 2;
+
+    return ceil(max, operator);
+};
 
 class LineChart extends PureComponent {
     static defaultProps = {
@@ -23,7 +37,10 @@ class LineChart extends PureComponent {
     state = {
         activePointIndex: null,
         scrolledToEnd: false,
-        yScaleTicks: [],
+        paddingRight: 30,
+        paddingTop: 20,
+        paddingBottom: 10,
+        yTicksAmount: 5,
     };
 
     _pixelRatio = window.devicePixelRatio;
@@ -33,34 +50,36 @@ class LineChart extends PureComponent {
     }
 
     componentDidMount() {
-        this.setStyles();
-        this.dashedLines();
+        this.drawDashedLines();
     }
 
     componentDidUpdate() {
-        this.setStyles();
-        this.dashedLines();
-        const chart = this.lineChart.chart_instance;
-        const yAxis = chart.config.options.scales.yAxes[0];
-        const yScaleTicks = chart.scales[yAxis.id].ticks;
-        console.log('--> componentDidUpdate', yScaleTicks);
-        console.log('--> chart', chart);
+        this.drawDashedLines();
     }
 
-    setStyles() {
-        const style = this.lineChart.chart_instance.canvas.style;
-        this.pointLine
-            .getContext('2d')
-            .scale(this._pixelRatio, this._pixelRatio);
-        this.dashedLineCanvas
-            .getContext('2d')
-            .scale(this._pixelRatio, this._pixelRatio);
-        style.zIndex = 2;
-        style.position = 'relative';
+    calculateWidth() {
+        const { id, labels } = this.props;
+        const { paddingRight } = this.state;
+        const pointWidth = id === 1 || id === 2 ? 85 : 180;
+        return labels.length * pointWidth - paddingRight;
     }
 
-    dashedLines() {
-        const { redLineValue, greenLineValue, max } = this.props;
+    calculateMaxAndStepSize() {
+        const { yTicksAmount } = this.state;
+        const { data } = this.props;
+        const maxNumberOfData = ceilMaxNumberOfData(data);
+        const stepSize = maxNumberOfData / (yTicksAmount - 1);
+        const max = maxNumberOfData + stepSize;
+
+        return {
+            stepSize,
+            max,
+        };
+    }
+
+    drawDashedLines() {
+        const { redLineValue, greenLineValue } = this.props;
+        const { max, stepSize } = this.calculateMaxAndStepSize();
 
         const chart = this.lineChart.chart_instance;
         const top = chart.chartArea.top;
@@ -68,8 +87,23 @@ class LineChart extends PureComponent {
         const bottom = chart.chartArea.bottom;
         const right = chart.chartArea.right;
         const getPixels = value => Math.round((bottom - top) / max * value);
+        const ticks = Array.from({ length: max / stepSize }, (_, index) => {
+            return stepSize * index;
+        });
+
+        // ↓ fix if lines have the same height with ticks
+        let fixRedLine = 0;
+        let fixGreenLine = 0;
+
+        ticks.forEach(number => {
+            if (number === redLineValue) fixRedLine = 1;
+            if (number === greenLineValue) fixGreenLine = 1;
+        });
 
         const ctx = this.dashedLineCanvas.getContext('2d');
+        ctx.save();
+        ctx.scale(this._pixelRatio, this._pixelRatio);
+
         ctx.clearRect(0, 0, chart.width, chart.height);
         ctx.setLineDash([5, 2]);
         ctx.lineWidth = 1;
@@ -79,21 +113,36 @@ class LineChart extends PureComponent {
         // ↓ red line
         ctx.strokeStyle = redOrange;
         ctx.beginPath();
-        ctx.moveTo(left, bottom + halfPixel - getPixels(redLineValue));
-        ctx.lineTo(right, bottom + halfPixel - getPixels(redLineValue));
+        ctx.moveTo(
+            left,
+            bottom + halfPixel - fixRedLine - getPixels(redLineValue),
+        );
+        ctx.lineTo(
+            right,
+            bottom + halfPixel - fixRedLine - getPixels(redLineValue),
+        );
         ctx.stroke();
 
         // ↓ green line
         ctx.strokeStyle = softGreen;
         ctx.beginPath();
-        ctx.moveTo(left, bottom + halfPixel - getPixels(greenLineValue));
-        ctx.lineTo(right, bottom + halfPixel - getPixels(greenLineValue));
+        ctx.moveTo(
+            left,
+            bottom + halfPixel - fixGreenLine - getPixels(greenLineValue),
+        );
+        ctx.lineTo(
+            right,
+            bottom + halfPixel - fixGreenLine - getPixels(greenLineValue),
+        );
         ctx.stroke();
+        ctx.restore();
     }
 
     onHoverPoint = ([charElement]) => {
         const ctx = this.pointLine.getContext('2d');
         const chart = this.lineChart.chart_instance;
+        ctx.save();
+        ctx.scale(this._pixelRatio, this._pixelRatio);
 
         if (charElement) {
             const activePointIndex = charElement._index;
@@ -125,6 +174,7 @@ class LineChart extends PureComponent {
             this.setState({ activePointIndex: null });
             ctx.clearRect(0, 0, chart.width, chart.height);
         }
+        ctx.restore();
     };
 
     onBodyScroll = ({ target }) => {
@@ -141,48 +191,17 @@ class LineChart extends PureComponent {
 
     render() {
         const { labels, data, height, id } = this.props;
-        const { activePointIndex, scrolledToEnd, yScaleTicks } = this.state;
+        const {
+            activePointIndex,
+            scrolledToEnd,
+            paddingRight,
+            paddingTop,
+            paddingBottom,
+            yTicksAmount,
+        } = this.state;
 
-        const paddingRight = 30;
-        const paddingTop = 20;
-        const paddingBottom = 10;
-        const pointWidth = id === 1 || id === 2 ? 85 : 180;
-        const width = labels.length * pointWidth - paddingRight;
-
-        const getMaxTick = data => {
-            const max = Math.max(...data);
-            const lengthOfNumber = Math.floor(max).toString().length;
-            const array = Array.from({ length: lengthOfNumber }, (_, index) => {
-                if (index === 0) return 1;
-                else return 0;
-            });
-            const operator = Number(array.join(''));
-            return Math.ceil(max / operator) * operator;
-        };
-        const decimalAdjust = value => {
-            let exp = Math.floor(value).toString().length - 1;
-            if (typeof exp === 'undefined' || +exp === 0) {
-                return Math.ceil(value);
-            }
-            value = +value;
-            exp = +exp;
-            if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
-                return NaN;
-            }
-            value = value.toString().split('e');
-            value = Math.ceil(
-                +(value[0] + 'e' + (value[1] ? +value[1] - exp : -exp)),
-            );
-            value = value.toString().split('e');
-            value = +(value[0] + 'e' + (value[1] ? +value[1] + exp : exp));
-            return value;
-        };
-        console.log('-->', decimalAdjust(888));
-
-        const yTicksAmount = 5;
-        const maxNumberOfData = getMaxTick(data);
-        const stepSize = maxNumberOfData / (yTicksAmount - 1);
-        const max = maxNumberOfData + stepSize;
+        const width = this.calculateWidth();
+        const { stepSize, max } = this.calculateMaxAndStepSize();
 
         const dataSet = {
             labels: labels,
@@ -277,6 +296,7 @@ class LineChart extends PureComponent {
                 ],
             },
         };
+
         return (
             <div className={styles.lineChart}>
                 <YScale
@@ -284,7 +304,6 @@ class LineChart extends PureComponent {
                     paddingBottom={paddingBottom}
                     stepSize={stepSize}
                     data={data}
-                    yScaleTicks={yScaleTicks}
                     height={height}
                     paddingTop={paddingTop}
                 />
@@ -293,17 +312,18 @@ class LineChart extends PureComponent {
                     className="line-chart-container"
                 >
                     <div className="line-chart-block">
-                        <Line
-                            /* need for rerender width */
-                            key={id}
-                            ref={c => {
-                                this.lineChart = c;
-                            }}
-                            width={width}
-                            height={height}
-                            options={options}
-                            data={dataSet}
-                        />
+                        <div className="main-chart">
+                            <Line
+                                key={id}
+                                ref={c => {
+                                    this.lineChart = c;
+                                }}
+                                width={width}
+                                height={height}
+                                options={options}
+                                data={dataSet}
+                            />
+                        </div>
                         <canvas
                             width={width * this._pixelRatio}
                             height={height * this._pixelRatio}

@@ -4,6 +4,8 @@
   height: $xScaleHeight;
   position: relative;
   display: flex;
+  cursor: default;
+  user-select: none;
   :global {
     .xScale-item {
       width: 0;

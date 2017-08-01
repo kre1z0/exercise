@@ -29,6 +29,10 @@ $xScaleHelperHeight: 20px;
       display: flex;
       .line-chart-block {
         padding-left: 69px;
+        .main-chart {
+          z-index: 2;
+          position: relative;
+        }
       }
     }
 

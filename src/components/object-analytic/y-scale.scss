@@ -2,6 +2,7 @@
 @import "./line-chart";
 
 .yScale {
+  cursor: default;
   width: 70px;
   background-color: $bgColor;
   user-select: none;
