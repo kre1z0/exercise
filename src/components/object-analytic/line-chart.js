@@ -315,8 +315,8 @@ class LineChart extends PureComponent {
                         <div className="main-chart">
                             <Line
                                 key={id}
-                                ref={c => {
-                                    this.lineChart = c;
+                                ref={canvas => {
+                                    this.lineChart = canvas;
                                 }}
                                 width={width}
                                 height={height}
@@ -331,8 +331,8 @@ class LineChart extends PureComponent {
                                 width: width,
                                 height: height,
                             }}
-                            ref={c => {
-                                this.dashedLineCanvas = c;
+                            ref={canvas => {
+                                this.dashedLineCanvas = canvas;
                             }}
                             className="dashed-line-canvas"
                         />
@@ -343,8 +343,8 @@ class LineChart extends PureComponent {
                                 width: width,
                                 height: height,
                             }}
-                            ref={c => {
-                                this.pointLine = c;
+                            ref={canvas => {
+                                this.pointLine = canvas;
                             }}
                             className="point-line-canvas"
                         />
