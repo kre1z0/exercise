@@ -2,7 +2,7 @@ import React from 'react';
 import SvgIcon from 'material-ui/SvgIcon';
 import { silver, strongSilver, softGreen } from '../../assets/theme';
 
-const AnalyticIcon = ({ isActive, ...props }) =>
+const AnalyticIcon = ({ isActive, ...props }) => (
     <SvgIcon {...props} viewBox="0 0 25 23">
         <path
             fill={isActive ? strongSilver : silver}
@@ -19,6 +19,7 @@ const AnalyticIcon = ({ isActive, ...props }) =>
             d="M14.4,23h-3.9C9.7,23,9,22.3,9,21.5v-20C9,0.7,9.7,0,10.6,0h3.9C15.3,0,16,0.7,16,1.5v20
 		C16,22.3,15.3,23,14.4,23z M11,21h3V2h-3V21z"
         />
-    </SvgIcon>;
+    </SvgIcon>
+);
 
 export default AnalyticIcon;

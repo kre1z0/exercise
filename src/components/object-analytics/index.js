@@ -48,12 +48,12 @@ class ObjectAnalyticItem extends Component {
     };
 
     render() {
-        const { title } = this.props;
+        const { title, icon } = this.props;
         const { activePanelId, data, greenLine, redLine, labels } = this.state;
 
         return (
             <div className={styles.objectAnalyticItem}>
-                <ObjectAnalyticHeader title={title} />
+                <ObjectAnalyticHeader icon={icon} title={title} />
                 <FilterPanel
                     onTouchTap={this.onPanelClick}
                     activePanelId={activePanelId}
