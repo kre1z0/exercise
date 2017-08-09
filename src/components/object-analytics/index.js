@@ -4,52 +4,44 @@ import FilterPanel from './filter-panel';
 import ObjectAnalyticHeader from './object-analytic-header';
 import LineChart from './line-chart';
 
+import {
+    data,
+    labels,
+    greenLineValue,
+    redLineValue,
+} from '../../components/object-analytics/test-data';
+
 import styles from './object-analytic.scss';
 
 class ObjectAnalyticItem extends Component {
     state = {
-        activePanelId: 1,
-        data: [157, 1, 35, 40, 57, 43, 101, 125, 133, 98, 68],
-        labels: [
-            'Янв',
-            'Фев',
-            'Мар',
-            'Апр',
-            'Май',
-            'Июн',
-            'Июл',
-            'Авг',
-            'Сен',
-            'Окт',
-            'Ноя',
-            'Дек',
-        ],
-        redLine: 88,
-        greenLine: 157,
+        activePanelId: this.props.activePanelId,
+        data: this.props.data,
+        labels: this.props.labels,
+        greenLineValue: this.props.greenLineValue,
+        redLineValue: this.props.redLineValue,
     };
 
     onPanelClick = id => {
         this.setState({
-            redLine: id * 25,
-            greenLine: id * 50,
+            greenLineValue: greenLineValue[id],
+            redLineValue: redLineValue[id],
             activePanelId: id,
-            data: [444 * id, 59, 25, 500, 545, 45, 77, 77],
-            labels: [
-                'I/2016',
-                'II/2016',
-                'III/2016',
-                'IV/2016',
-                'I/2017',
-                'II/2017',
-                'III/2017',
-                'IV/2017',
-            ],
+            data: data[id],
+            labels: labels[id],
         });
     };
 
     render() {
         const { title, icon } = this.props;
-        const { activePanelId, data, greenLine, redLine, labels } = this.state;
+
+        const {
+            activePanelId,
+            data,
+            greenLineValue,
+            redLineValue,
+            labels,
+        } = this.state;
 
         return (
             <div className={styles.objectAnalyticItem}>
@@ -86,8 +78,8 @@ class ObjectAnalyticItem extends Component {
                 />
                 <LineChart
                     id={activePanelId}
-                    redLineValue={redLine}
-                    greenLineValue={greenLine}
+                    greenLineValue={greenLineValue}
+                    redLineValue={redLineValue}
                     data={data}
                     labels={labels}
                 />
