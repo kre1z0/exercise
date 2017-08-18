@@ -1,89 +1,38 @@
 import React, { Component } from 'react';
 
-import AnalyticsHeader from '../../components/analytics/header';
-import {
-    ColdWaterIcon,
-    AmountIcon,
-    VisitorsIcon,
-    GasIcon,
-    ElectricityIcon,
-    HotWaterIcon,
-} from '../../components/icons/';
-import ObjectAnalyticItem from '../../components/object-analytics/';
+import cloneDeep from 'lodash/cloneDeep';
+import ReactPhoneInput from 'react-phone-input';
 
-import {
-    data,
-    labels,
-    greenLineValue,
-    redLineValue,
-} from '../../components/object-analytics/test-data';
-
-import styles from './object-analytic.scss';
+import './home.scss';
 
 class Home extends Component {
+    handleOnChange = value => {
+        console.log('--> value', value);
+    };
+    focus = value => {
+        console.log('--> value', value);
+    };
     render() {
         return (
-            <div className={styles.objectAnalytics}>
-                <AnalyticsHeader title="Аналитика по объекту Егорьевский завод строительных материалов" />
-                <div className="object-analytics-content">
-                    <ObjectAnalyticItem
-                        activePanelId={2}
-                        title="Объём выпуска продукции, кг"
-                        icon={<AmountIcon />}
-                        greenLineValue={greenLineValue[2]}
-                        redLineValue={redLineValue[2]}
-                        data={data[2]}
-                        labels={labels[2]}
-                    />
-                    <ObjectAnalyticItem
-                        activePanelId={1}
-                        title="Количество посетителей завода, чел"
-                        icon={<VisitorsIcon />}
-                        greenLineValue={greenLineValue[1]}
-                        redLineValue={redLineValue[1]}
-                        data={data[1]}
-                        labels={labels[1]}
-                    />
-                    <ObjectAnalyticItem
-                        activePanelId={3}
-                        title="Объём потребления газа, м3"
-                        icon={<GasIcon />}
-                        greenLineValue={greenLineValue[3]}
-                        redLineValue={redLineValue[3]}
-                        data={data[3]}
-                        labels={labels[3]}
-                    />
-                    <ObjectAnalyticItem
-                        activePanelId={4}
-                        title="Объём потребления электроэнергии, кВт/ч"
-                        icon={<ElectricityIcon />}
-                        greenLineValue={greenLineValue[4]}
-                        redLineValue={redLineValue[4]}
-                        data={data[4]}
-                        labels={labels[4]}
-                    />
-                    <ObjectAnalyticItem
-                        activePanelId={2}
-                        title="Объём потребления горячей воды, м3"
-                        icon={<HotWaterIcon />}
-                        greenLineValue={greenLineValue[2]}
-                        redLineValue={redLineValue[2]}
-                        data={data[2]}
-                        labels={labels[2]}
-                    />
-                    <ObjectAnalyticItem
-                        activePanelId={1}
-                        title="Объём потребления холодной воды, м3"
-                        icon={<ColdWaterIcon />}
-                        greenLineValue={greenLineValue[1]}
-                        redLineValue={redLineValue[1]}
-                        data={data[1]}
-                        labels={labels[1]}
-                    />
-                </div>
+            <div>
+                <div className="lol" onFocus={this.focus}>4</div>
+                <div className="lol" onFocus={this.focus}>3</div>
+                <div className="lol" onFocus={this.focus}>2</div>
+                <div className="lol" onFocus={this.focus}>1</div>
+                <p><a href="1.html" tabindex="1">Ссылка 1</a></p>
+                <p><a href="3.html" tabindex="3">Ссылка 3</a></p>
+                <p><a href="2.html" tabindex="2">Ссылка 2</a></p>
+                <p><a href="4.html" tabindex="4">Ссылка 4</a></p>
             </div>
         );
     }
 }
 
+var objects = [{ 'a': 1 }, { 'b': 2 }];
+
+var deep = cloneDeep(objects);
+
+console.log(deep[0] === objects[0]);
+console.log('--> deep[0]', deep[0]);
+console.log('--> objects[0]', objects[0]);
 export default Home;

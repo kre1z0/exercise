@@ -37,7 +37,10 @@ class Sorting extends Component {
         );
     };
     sumOfAllValuesInTheArray = (array = [0]) => {
-        return array.reduce((a, b) => a + b);
+        return array.reduce((a, b) => {
+            console.log('--> a', a);
+            return a + b;
+        });
     };
     getMinAndMaxValue = (min, max) => {
         const getMin = min => (acc, val) =>

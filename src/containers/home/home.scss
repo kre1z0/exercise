@@ -1,0 +1,10 @@
+:global {
+  .lol {
+    background-color: red;
+    &:focus {
+      background-color: green;
+    }
+  }
+}
+
+
